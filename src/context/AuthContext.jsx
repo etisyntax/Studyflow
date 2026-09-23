@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,9 +23,21 @@ export function AuthProvider({ children }) {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!session) return;
+
+    supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", session.user.id)
+      .single()
+      .then(({ data }) => setProfile(data));
+  }, [session]);
+
   const value = {
     session,
     user: session ? session.user : null,
+    profile: session ? profile : null,
     loading,
   };
 
