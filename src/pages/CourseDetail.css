@@ -1,0 +1,172 @@
+.back-link {
+  display: inline-block;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+}
+
+.back-link:hover {
+  color: var(--primary);
+}
+
+.course-hero {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.course-hero-icon {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 2.4rem;
+  background: color-mix(in srgb, var(--course-color) 15%, white);
+}
+
+.detail-level {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--course-color);
+  background: color-mix(in srgb, var(--course-color) 12%, white);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.course-hero h1 {
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.course-hero p {
+  color: var(--muted);
+  max-width: 640px;
+}
+
+.progress-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.progress-info strong {
+  font-size: 1.1rem;
+}
+
+.progress-info span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.course-progress-track {
+  height: 12px;
+  background: var(--bg);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.course-progress-bar {
+  height: 100%;
+  background: var(--course-color);
+  border-radius: 999px;
+  transition: width 0.8s ease;
+}
+
+.progress-card .btn {
+  align-self: flex-start;
+}
+
+.course-done {
+  font-weight: 600;
+  color: var(--success);
+}
+
+.lessons-heading {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  transition: all 0.2s ease;
+}
+
+.lesson-row:hover {
+  border-color: var(--course-color);
+  transform: translateX(6px);
+}
+
+.lesson-number {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--muted);
+  min-width: 28px;
+}
+
+.lesson-title {
+  flex: 1;
+  font-weight: 600;
+}
+
+.lesson-status {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.lesson-row.done .lesson-status {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.lesson-row.done .lesson-number {
+  color: var(--success);
+}
+
+@media (max-width: 600px) {
+  .course-hero {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .progress-card .btn {
+    align-self: stretch;
+  }
+}
