@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import Markdown from "react-markdown";
 import { supabase } from "../lib/supabase";
+import CodePlayground from "../components/CodePlayground";
 import "./Lesson.css";
 
 function Lesson() {
@@ -93,19 +94,7 @@ function Lesson() {
       </article>
 
       {lesson.example_code && (
-        <div className="code-block">
-          <div className="code-header">
-            <div className="code-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            Example
-          </div>
-          <pre>
-            <code>{lesson.example_code}</code>
-          </pre>
-        </div>
+        <CodePlayground key={lesson.id} initialCode={lesson.example_code} />
       )}
 
       <div className="complete-box">

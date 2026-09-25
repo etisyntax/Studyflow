@@ -1,0 +1,160 @@
+.playground {
+  margin-top: 28px;
+  background: #0f172a;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.playground-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  background: #1e293b;
+}
+
+.playground-title {
+  flex: 1;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.playground-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pg-btn {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pg-reset {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #334155;
+}
+
+.pg-reset:hover {
+  color: #e2e8f0;
+  border-color: #64748b;
+}
+
+.pg-run {
+  background: var(--success);
+  color: #fff;
+}
+
+.pg-run:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.pg-run:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.playground-editor {
+  display: block;
+  width: 100%;
+  background: #0f172a;
+  color: #e2e8f0;
+  border: none;
+  outline: none;
+  resize: vertical;
+  padding: 22px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  tab-size: 2;
+  white-space: pre;
+  overflow-x: auto;
+  caret-color: var(--success);
+  transition: background 0.2s ease;
+}
+
+.playground-editor:focus {
+  background: #111c33;
+}
+
+.playground-output {
+  border-top: 1px solid #1e293b;
+  background: #020617;
+  padding: 16px 22px 20px;
+  min-height: 90px;
+}
+
+.output-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.output-hint {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.output-line {
+  margin: 0;
+  padding: 3px 0;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #a7f3d0;
+  animation: lineIn 0.2s ease both;
+}
+
+.output-line::before {
+  content: "› ";
+  color: #475569;
+}
+
+.output-line.error {
+  color: #fca5a5;
+}
+
+.output-line.info {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+@keyframes lineIn {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .playground-header {
+    flex-wrap: wrap;
+  }
+
+  .playground-actions {
+    width: 100%;
+  }
+
+  .pg-btn {
+    flex: 1;
+  }
+}
