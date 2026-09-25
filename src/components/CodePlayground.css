@@ -158,3 +158,21 @@
     flex: 1;
   }
 }
+.playground-preview {
+  border-top: 1px solid #1e293b;
+  background: #020617;
+  padding: 16px 22px 20px;
+}
+
+.preview-frame {
+  display: block;
+  width: 100%;
+  min-height: 300px;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.preview-hint {
+  margin-top: 12px;
+}

@@ -32,12 +32,14 @@ const workerSource = `
   };
 `;
 
-function CodePlayground({ initialCode }) {
+function CodePlayground({ initialCode, mode = "javascript" }) {
+  const isHtml = mode === "html";
   const [code, setCode] = useState(initialCode);
   const [output, setOutput] = useState([]);
+  const [preview, setPreview] = useState(isHtml ? initialCode : "");
   const [running, setRunning] = useState(false);
 
-  function runCode() {
+  function runJavaScript() {
     setRunning(true);
     setOutput([]);
 
@@ -89,9 +91,18 @@ function CodePlayground({ initialCode }) {
     worker.postMessage(code);
   }
 
+  function runCode() {
+    if (isHtml) {
+      setPreview(code);
+    } else {
+      runJavaScript();
+    }
+  }
+
   function resetCode() {
     setCode(initialCode);
     setOutput([]);
+    setPreview(isHtml ? initialCode : "");
   }
 
   function handleKeyDown(event) {
@@ -124,7 +135,9 @@ function CodePlayground({ initialCode }) {
           <span></span>
           <span></span>
         </div>
-        <span className="playground-title">Code Playground</span>
+        <span className="playground-title">
+          {isHtml ? "HTML and CSS Playground" : "Code Playground"}
+        </span>
         <div className="playground-actions">
           <button className="pg-btn pg-reset" onClick={resetCode}>
             Reset
@@ -144,20 +157,35 @@ function CodePlayground({ initialCode }) {
         rows={code.split("\n").length + 1}
       />
 
-      <div className="playground-output">
-        <div className="output-label">Output</div>
-        {output.length === 0 ? (
-          <p className="output-hint">
-            Click Run, or press Ctrl and Enter, to see the result here.
+      {isHtml ? (
+        <div className="playground-preview">
+          <div className="output-label">Preview</div>
+          <iframe
+            className="preview-frame"
+            title="Code preview"
+            srcDoc={preview}
+            sandbox="allow-popups"
+          ></iframe>
+          <p className="output-hint preview-hint">
+            Edit the code, then click Run or press Ctrl and Enter to update the preview.
           </p>
-        ) : (
-          output.map((line, index) => (
-            <pre key={index} className={`output-line ${line.type}`}>
-              {line.text}
-            </pre>
-          ))
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="playground-output">
+          <div className="output-label">Output</div>
+          {output.length === 0 ? (
+            <p className="output-hint">
+              Click Run, or press Ctrl and Enter, to see the result here.
+            </p>
+          ) : (
+            output.map((line, index) => (
+              <pre key={index} className={`output-line ${line.type}`}>
+                {line.text}
+              </pre>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }

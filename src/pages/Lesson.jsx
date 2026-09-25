@@ -18,7 +18,7 @@ function Lesson() {
     async function loadLesson() {
       const { data: lessonData, error: lessonError } = await supabase
         .from("lessons")
-        .select("*")
+        .select("*, courses(playground)")
         .eq("id", lessonId)
         .single();
 
@@ -94,7 +94,11 @@ function Lesson() {
       </article>
 
       {lesson.example_code && (
-        <CodePlayground key={lesson.id} initialCode={lesson.example_code} />
+        <CodePlayground
+          key={lesson.id}
+          initialCode={lesson.example_code}
+          mode={lesson.courses.playground}
+        />
       )}
 
       <div className="complete-box">
