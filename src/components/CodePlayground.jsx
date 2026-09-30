@@ -15,6 +15,82 @@ const workerSource = `
     }
   }
 
+  const realSetTimeout = self.setTimeout.bind(self);
+  const realClearTimeout = self.clearTimeout.bind(self);
+  const realSetInterval = self.setInterval.bind(self);
+  const realClearInterval = self.clearInterval.bind(self);
+  const pending = new Set();
+  let finished = false;
+
+  function report(error) {
+    const text = error && error.name ? error.name + ": " + error.message : String(error);
+    self.postMessage({ type: "log-error", text: text });
+  }
+
+  function checkDone() {
+    realSetTimeout(function () {
+      if (pending.size === 0 && !finished) {
+        finished = true;
+        self.postMessage({ type: "done" });
+      }
+    }, 0);
+  }
+
+  self.setTimeout = function (callback, delay, ...args) {
+    const id = realSetTimeout(function () {
+      pending.delete(id);
+      try {
+        callback(...args);
+      } catch (error) {
+        report(error);
+      }
+      checkDone();
+    }, delay);
+    pending.add(id);
+    return id;
+  };
+
+  self.clearTimeout = function (id) {
+    realClearTimeout(id);
+    pending.delete(id);
+    checkDone();
+  };
+
+  self.setInterval = function (callback, delay, ...args) {
+    const id = realSetInterval(function () {
+      try {
+        callback(...args);
+      } catch (error) {
+        report(error);
+      }
+    }, delay);
+    pending.add(id);
+    return id;
+  };
+
+  self.clearInterval = function (id) {
+    realClearInterval(id);
+    pending.delete(id);
+    checkDone();
+  };
+
+  if (self.fetch) {
+    const realFetch = self.fetch.bind(self);
+    self.fetch = function (...args) {
+      const request = {};
+      pending.add(request);
+      return realFetch(...args).finally(function () {
+        pending.delete(request);
+        checkDone();
+      });
+    };
+  }
+
+  self.onunhandledrejection = function (event) {
+    report(event.reason);
+    checkDone();
+  };
+
   self.onmessage = function (event) {
     const send = function (...args) {
       self.postMessage({ type: "log", text: args.map(format).join(" ") });
@@ -25,12 +101,20 @@ const workerSource = `
     console.warn = send;
     console.error = send;
 
+    const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+
+    let run;
     try {
-      new Function(event.data)();
-      self.postMessage({ type: "done" });
+      run = new AsyncFunction(event.data);
     } catch (error) {
       self.postMessage({ type: "error", text: error.name + ": " + error.message });
+      return;
     }
+
+    run().then(checkDone, function (error) {
+      report(error);
+      checkDone();
+    });
   };
 `;
 
@@ -66,42 +150,58 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
     const url = URL.createObjectURL(blob);
     const worker = new Worker(url);
     const lines = [];
+    let ended = false;
+    let idleTimer;
 
     function finish() {
+      if (ended) return;
+      ended = true;
+      clearTimeout(idleTimer);
+      clearTimeout(hardTimer);
       worker.terminate();
       URL.revokeObjectURL(url);
-      setOutput([...lines]);
-      setRunning(false);
-    }
-
-    const timer = setTimeout(() => {
-      lines.push({
-        type: "error",
-        text: "Your code took too long to run and was stopped. Check for an infinite loop.",
-      });
-      finish();
-    }, 3000);
-
-    worker.onmessage = (event) => {
-      const message = event.data;
-
-      if (message.type === "log") {
-        lines.push({ type: "log", text: message.text });
-        setOutput([...lines]);
-        return;
-      }
-
-      clearTimeout(timer);
-
-      if (message.type === "error") {
-        lines.push({ type: "error", text: message.text });
-      }
-
       if (lines.length === 0) {
         lines.push({
           type: "info",
           text: "Your code ran, but nothing was printed. Use console.log() to show output.",
         });
+      }
+      setOutput([...lines]);
+      setRunning(false);
+    }
+
+    function stopWith(message) {
+      lines.push({ type: "error", text: message });
+      finish();
+    }
+
+    function resetIdle() {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        stopWith(
+          "Your code went 5 seconds without finishing and was stopped. Check for an infinite loop, or a timer that never stops."
+        );
+      }, 5000);
+    }
+
+    const hardTimer = setTimeout(() => {
+      stopWith("Your code ran for more than 15 seconds and was stopped.");
+    }, 15000);
+
+    resetIdle();
+
+    worker.onmessage = (event) => {
+      const message = event.data;
+
+      if (message.type === "log" || message.type === "log-error") {
+        lines.push({ type: message.type === "log" ? "log" : "error", text: message.text });
+        setOutput([...lines]);
+        resetIdle();
+        return;
+      }
+
+      if (message.type === "error") {
+        lines.push({ type: "error", text: message.text });
       }
 
       finish();
