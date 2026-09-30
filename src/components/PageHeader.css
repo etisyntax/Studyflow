@@ -1,6 +1,6 @@
 .hero-header {
   --ph-from: #4f46e5;
-  --ph-to: #06b6d4;
+  --ph-to: #7c3aed;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -17,22 +17,22 @@
 
 .hero-header.theme-indigo {
   --ph-from: #4f46e5;
-  --ph-to: #06b6d4;
+  --ph-to: #7c3aed;
 }
 
 .hero-header.theme-pink {
-  --ph-from: #db2777;
-  --ph-to: #f97316;
+  --ph-from: #6d28d9;
+  --ph-to: #a855f7;
 }
 
 .hero-header.theme-teal {
-  --ph-from: #0d9488;
-  --ph-to: #4f46e5;
+  --ph-from: #4338ca;
+  --ph-to: #8b5cf6;
 }
 
 .hero-header.theme-violet {
-  --ph-from: #7c3aed;
-  --ph-to: #ec4899;
+  --ph-from: #5b21b6;
+  --ph-to: #9333ea;
 }
 
 .hero-header > *:not(.ph-circle) {

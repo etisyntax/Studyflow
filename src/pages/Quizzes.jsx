@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
-import { CheckIcon, SearchIcon, ClockIcon } from "../components/Icons";
+import PageHeader from "../components/PageHeader";
+import CountUp from "../components/CountUp";
+import { CheckIcon, SearchIcon, ClockIcon, TargetIcon } from "../components/Icons";
 import "./Quizzes.css";
 
 const levelOrder = { easy: 1, medium: 2, hard: 3 };
@@ -24,40 +26,36 @@ function Quizzes() {
 
   useEffect(() => {
     async function loadQuizzes() {
-      const { data: quizData, error: quizError } = await supabase
-        .from("quizzes")
-        .select(
-          "id, position, title, description, difficulty, minutes, lesson_from, lesson_to, courses(id, title, icon, color, position)"
-        );
+      const [quizRes, questionRes, resultRes] = await Promise.all([
+        supabase
+          .from("quizzes")
+          .select(
+            "id, position, title, description, difficulty, minutes, lesson_from, lesson_to, courses(id, title, color, position)"
+          ),
+        supabase.from("questions").select("quiz_id"),
+        supabase.from("quiz_results").select("quiz_id, score, total"),
+      ]);
 
-      const { data: questionData, error: questionError } = await supabase
-        .from("questions")
-        .select("quiz_id");
-
-      const { data: resultData } = await supabase
-        .from("quiz_results")
-        .select("quiz_id, score, total");
-
-      if (quizError || questionError) {
+      if (quizRes.error || questionRes.error) {
         setError("Could not load quizzes. Please try again.");
         setLoading(false);
         return;
       }
 
       const counts = {};
-      questionData.forEach((question) => {
+      questionRes.data.forEach((question) => {
         counts[question.quiz_id] = (counts[question.quiz_id] || 0) + 1;
       });
 
       const bests = {};
-      (resultData || []).forEach((attempt) => {
+      (resultRes.data || []).forEach((attempt) => {
         const percent = Math.round((attempt.score / attempt.total) * 100);
         if (bests[attempt.quiz_id] === undefined || percent > bests[attempt.quiz_id]) {
           bests[attempt.quiz_id] = percent;
         }
       });
 
-      const list = quizData.map((quiz) => ({
+      const list = quizRes.data.map((quiz) => ({
         ...quiz,
         questionCount: counts[quiz.id] || 0,
         bestScore: bests[quiz.id] ?? null,
@@ -77,6 +75,11 @@ function Quizzes() {
     }
   });
   courses.sort((a, b) => a.position - b.position);
+
+  const passedCount = quizzes.filter(
+    (quiz) => quiz.bestScore !== null && quiz.bestScore >= 70
+  ).length;
+  const totalQuestions = quizzes.reduce((sum, quiz) => sum + quiz.questionCount, 0);
 
   const searchText = search.toLowerCase();
 
@@ -116,66 +119,74 @@ function Quizzes() {
           Showing {visibleQuizzes.length} of {quizzes.length} quizzes
         </p>
         <div className="quiz-grid">
-          {visibleQuizzes.map((quiz, index) => (
-            <div
-              key={quiz.id}
-              className="quiz-tile"
-              style={{
-                "--course-color": quiz.courses.color,
-                animationDelay: `${Math.min(index, 12) * 0.04}s`,
-              }}
-            >
-              <div className="qt-top">
-                <span className={`qt-badge ${quiz.difficulty}`}>
-                  {levelLabels[quiz.difficulty]}
-                </span>
-                {quiz.bestScore !== null && quiz.bestScore >= 70 && (
-                  <span className="qt-passed">
-                    <CheckIcon size={14} /> Passed
-                  </span>
-                )}
-                <span className="qt-time">
-                  <ClockIcon size={14} /> {quiz.minutes} min
-                </span>
-              </div>
+          {visibleQuizzes.map((quiz, index) => {
+            const passed = quiz.bestScore !== null && quiz.bestScore >= 70;
 
-              <span className="qt-course">
-                {quiz.courses.icon} {quiz.courses.title}
-              </span>
-              <h2>{quiz.title}</h2>
-              <p>{quiz.description}</p>
-              <span className="qt-covers">
-                Covers lessons {quiz.lesson_from} to {quiz.lesson_to}
-              </span>
-
-              <div className="qt-stats">
-                <div>
-                  <span>Questions</span>
-                  <strong>{quiz.questionCount}</strong>
+            return (
+              <div
+                key={quiz.id}
+                className="quiz-tile"
+                style={{ "--course-color": quiz.courses.color, "--i": Math.min(index, 12) }}
+              >
+                <div className="qt-banner">
+                  <span className="qt-banner-circle"></span>
+                  <span className="qt-mark">{quiz.courses.title.charAt(0)}</span>
+                  <div className="qt-tags">
+                    <span className={`qt-badge ${quiz.difficulty}`}>
+                      {levelLabels[quiz.difficulty]}
+                    </span>
+                    {passed && (
+                      <span className="qt-passed">
+                        <CheckIcon size={13} /> Passed
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <span>Best score</span>
-                  {quiz.bestScore === null ? (
-                    <strong>New</strong>
+
+                <div className="qt-body">
+                  <div className="qt-meta">
+                    <span className="qt-course">{quiz.courses.title}</span>
+                    <span className="qt-time">
+                      <ClockIcon size={14} /> {quiz.minutes} min
+                    </span>
+                  </div>
+
+                  <h2>{quiz.title}</h2>
+                  <p>{quiz.description}</p>
+                  <span className="qt-covers">
+                    Covers lessons {quiz.lesson_from} to {quiz.lesson_to}
+                  </span>
+
+                  <div className="qt-stats">
+                    <div>
+                      <span>Questions</span>
+                      <strong>{quiz.questionCount}</strong>
+                    </div>
+                    <div>
+                      <span>Best score</span>
+                      {quiz.bestScore === null ? (
+                        <strong>New</strong>
+                      ) : (
+                        <strong className={`qt-best ${scoreClass(quiz.bestScore)}`}>
+                          {quiz.bestScore}%
+                        </strong>
+                      )}
+                    </div>
+                  </div>
+
+                  {quiz.questionCount > 0 ? (
+                    <Link to={`/quizzes/${quiz.id}`} className="qt-button">
+                      {quiz.bestScore === null ? "Start quiz" : "Retake quiz"}
+                    </Link>
                   ) : (
-                    <strong className={`qt-best ${scoreClass(quiz.bestScore)}`}>
-                      {quiz.bestScore}%
-                    </strong>
+                    <button className="qt-button qt-soon" disabled>
+                      Coming soon
+                    </button>
                   )}
                 </div>
               </div>
-
-              {quiz.questionCount > 0 ? (
-                <Link to={`/quizzes/${quiz.id}`} className="btn btn-primary qt-button">
-                  {quiz.bestScore === null ? "Start quiz" : "Retake quiz"}
-                </Link>
-              ) : (
-                <button className="btn qt-button qt-soon" disabled>
-                  Coming soon
-                </button>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </>
     );
@@ -183,10 +194,29 @@ function Quizzes() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1>Available quizzes</h1>
-        <p>Search, filter and start a quiz to test what you have learned.</p>
-      </div>
+      <PageHeader
+        icon={TargetIcon}
+        theme="pink"
+        title="Available quizzes"
+        subtitle="Search, filter and start a quiz to test what you have learned."
+      >
+        {!loading && !error && (
+          <>
+            <div className="ph-stat">
+              <strong><CountUp end={quizzes.length} /></strong>
+              <span>Quizzes</span>
+            </div>
+            <div className="ph-stat">
+              <strong><CountUp end={passedCount} /></strong>
+              <span>Passed</span>
+            </div>
+            <div className="ph-stat">
+              <strong><CountUp end={totalQuestions} /></strong>
+              <span>Questions</span>
+            </div>
+          </>
+        )}
+      </PageHeader>
 
       <div className="quiz-toolbar">
         <div className="qt-search">
