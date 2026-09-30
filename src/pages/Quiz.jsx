@@ -3,27 +3,6 @@ import { Link, useParams } from "react-router";
 import { supabase } from "../lib/supabase";
 import "./Quiz.css";
 
-const levels = [
-  {
-    id: "easy",
-    label: "Easy",
-    icon: "🟢",
-    text: "Definitions and basic facts. A great place to start.",
-  },
-  {
-    id: "medium",
-    label: "Medium",
-    icon: "🟡",
-    text: "Read short pieces of code and predict the result.",
-  },
-  {
-    id: "hard",
-    label: "Hard",
-    icon: "🔴",
-    text: "Tricky details and common mistakes. Prove your mastery.",
-  },
-];
-
 const letters = ["A", "B", "C", "D"];
 
 function shuffle(items) {
@@ -36,10 +15,9 @@ function shuffle(items) {
 }
 
 function Quiz() {
-  const { courseId } = useParams();
-  const [course, setCourse] = useState(null);
-  const [stage, setStage] = useState("choose");
-  const [difficulty, setDifficulty] = useState("");
+  const { quizId } = useParams();
+  const [quiz, setQuiz] = useState(null);
+  const [stage, setStage] = useState("loading");
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -50,43 +28,35 @@ function Quiz() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadCourse() {
-      const { data, error } = await supabase
-        .from("courses")
-        .select("id, title, icon, color")
-        .eq("id", courseId)
+    async function loadQuiz() {
+      const { data: quizData, error: quizError } = await supabase
+        .from("quizzes")
+        .select("id, title, difficulty, minutes, courses(title, icon, color)")
+        .eq("id", quizId)
         .single();
 
-      if (error) setError("Sorry, this course could not be found.");
-      else setCourse(data);
+      if (quizError) {
+        setError("Sorry, this quiz could not be found.");
+        return;
+      }
+
+      const { data: questionData, error: questionError } = await supabase
+        .from("questions")
+        .select("id, question, options")
+        .eq("quiz_id", quizId);
+
+      if (questionError || questionData.length === 0) {
+        setError("This quiz has no questions yet. Please check back soon.");
+        return;
+      }
+
+      setQuiz(quizData);
+      setQuestions(shuffle(questionData));
+      setStage("question");
     }
 
-    loadCourse();
-  }, [courseId]);
-
-  async function startQuiz(level) {
-    setError("");
-
-    const { data, error } = await supabase
-      .from("questions")
-      .select("id, question, options")
-      .eq("course_id", courseId)
-      .eq("difficulty", level);
-
-    if (error || data.length === 0) {
-      setError("No questions are available for this level yet.");
-      return;
-    }
-
-    setDifficulty(level);
-    setQuestions(shuffle(data));
-    setCurrent(0);
-    setSelected(null);
-    setResult(null);
-    setScore(0);
-    setAnswers([]);
-    setStage("question");
-  }
+    loadQuiz();
+  }, [quizId]);
 
   async function chooseAnswer(index) {
     if (selected !== null || checking) return;
@@ -140,58 +110,60 @@ function Quiz() {
     }
   }
 
-  if (!course) {
-    return error ? (
-      <div className="page-message error">{error}</div>
-    ) : (
-      <div className="page-message">Loading quiz...</div>
+  function restartQuiz() {
+    setQuestions(shuffle(questions));
+    setCurrent(0);
+    setSelected(null);
+    setResult(null);
+    setScore(0);
+    setAnswers([]);
+    setError("");
+    setStage("question");
+  }
+
+  if (!quiz) {
+    return (
+      <div className="quiz-page">
+        <Link to="/quizzes" className="back-link">
+          ← All quizzes
+        </Link>
+        {error ? (
+          <div className="page-message error">{error}</div>
+        ) : (
+          <div className="page-message">Loading quiz...</div>
+        )}
+      </div>
     );
   }
 
   const question = questions[current];
   const answeredCount = current + (result ? 1 : 0);
-  const progress = questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
+  const progress = (answeredCount / questions.length) * 100;
 
   return (
-    <div className="quiz-page" style={{ "--course-color": course.color }}>
-      <Link to={`/courses/${courseId}`} className="back-link">
-        ← Back to course
+    <div className="quiz-page" style={{ "--course-color": quiz.courses.color }}>
+      <Link to="/quizzes" className="back-link">
+        ← All quizzes
       </Link>
 
-      {stage === "choose" && (
-        <div className="quiz-intro">
-          <div className="quiz-icon">{course.icon}</div>
-          <h1>{course.title} Quiz</h1>
-          <p>
-            Choose your difficulty. Each quiz has 10 questions, and you will get
-            instant feedback after every answer.
+      <div className="quiz-header">
+        <div className="quiz-header-icon">{quiz.courses.icon}</div>
+        <div>
+          <span className={`level-badge level-${quiz.difficulty}`}>{quiz.difficulty}</span>
+          <h1>{quiz.title}</h1>
+          <p className="quiz-subtitle">
+            {quiz.courses.title} · {questions.length} questions · {quiz.minutes} min
           </p>
-
-          {error && <div className="quiz-error">{error}</div>}
-
-          <div className="level-grid">
-            {levels.map((level) => (
-              <button
-                key={level.id}
-                className={`level-card level-${level.id}`}
-                onClick={() => startQuiz(level.id)}
-              >
-                <span className="level-icon">{level.icon}</span>
-                <strong>{level.label}</strong>
-                <span>{level.text}</span>
-              </button>
-            ))}
-          </div>
         </div>
-      )}
+      </div>
 
       {stage === "question" && question && (
         <div className="quiz-card">
           <div className="quiz-top">
-            <span className={`level-badge level-${difficulty}`}>{difficulty}</span>
             <span className="quiz-count">
               Question {current + 1} of {questions.length}
             </span>
+            <span className="quiz-count">Score: {score}</span>
           </div>
 
           <div className="quiz-progress">
@@ -253,16 +225,13 @@ function Quiz() {
           <p className="finished-score">
             {score} / {questions.length}
           </p>
-          <p>
-            You scored {Math.round((score / questions.length) * 100)}% on{" "}
-            {difficulty}.
-          </p>
+          <p>You scored {Math.round((score / questions.length) * 100)}%.</p>
           <div className="finished-actions">
-            <button className="btn btn-primary" onClick={() => setStage("choose")}>
-              Try another level
+            <button className="btn btn-primary" onClick={restartQuiz}>
+              Try again
             </button>
-            <Link to={`/courses/${courseId}`} className="btn btn-outline">
-              Back to course
+            <Link to="/quizzes" className="btn btn-outline">
+              All quizzes
             </Link>
           </div>
         </div>
