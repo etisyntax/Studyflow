@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
-import { HistoryIcon } from "./Icons";
+import { HistoryIcon, UserIcon } from "./Icons";
 import "./AppLayout.css";
 
 function HomeIcon() {
@@ -47,6 +47,7 @@ const links = [
   { to: "/courses", label: "Courses", icon: <BookIcon /> },
   { to: "/quizzes", label: "Quizzes", icon: <TargetIcon /> },
   { to: "/history", label: "History", icon: <HistoryIcon /> },
+  { to: "/profile", label: "Profile", icon: <UserIcon />, mobileOnly: true },
 ];
 
 function AppLayout() {
@@ -71,7 +72,11 @@ function AppLayout() {
 
         <nav className="sidebar-nav">
           {links.map((link) => (
-            <NavLink key={link.to} to={link.to} className="sidebar-link">
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={`sidebar-link ${link.mobileOnly ? "mobile-only" : ""}`}
+            >
               {link.icon}
               <span>{link.label}</span>
             </NavLink>
@@ -79,13 +84,13 @@ function AppLayout() {
         </nav>
 
         <div className="sidebar-footer">
-          <div className="sidebar-user">
+          <NavLink to="/profile" className="sidebar-user" title="View your profile">
             <div className="avatar">{initial}</div>
             <div className="sidebar-user-info">
               <strong>{name}</strong>
-              <span>Student</span>
+              <span>View profile</span>
             </div>
-          </div>
+          </NavLink>
           <button className="sidebar-link logout-btn" onClick={handleLogout}>
             <LogoutIcon />
             <span>Log out</span>

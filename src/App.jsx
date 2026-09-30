@@ -9,6 +9,7 @@ import Lesson from "./pages/Lesson";
 import Quizzes from "./pages/Quizzes";
 import Quiz from "./pages/Quiz";
 import History from "./pages/History";
+import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/quizzes" element={<Quizzes />} />
         <Route path="/quizzes/:quizId" element={<Quiz />} />
         <Route path="/history" element={<History />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );

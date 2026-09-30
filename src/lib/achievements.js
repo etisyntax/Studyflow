@@ -1,3 +1,4 @@
+import { supabase } from "./supabase";
 import {
   BookOpenIcon,
   StarIcon,
@@ -9,102 +10,18 @@ import {
 } from "../components/Icons";
 
 export const achievements = [
-  {
-    id: "first-steps",
-    title: "First Steps",
-    description: "Complete your first lesson.",
-    icon: BookOpenIcon,
-    target: 1,
-    progress: (stats) => stats.lessonsDone,
-  },
-  {
-    id: "getting-started",
-    title: "Getting Started",
-    description: "Complete 5 lessons.",
-    icon: BookOpenIcon,
-    target: 5,
-    progress: (stats) => stats.lessonsDone,
-  },
-  {
-    id: "dedicated",
-    title: "Dedicated Learner",
-    description: "Complete 25 lessons.",
-    icon: StarIcon,
-    target: 25,
-    progress: (stats) => stats.lessonsDone,
-  },
-  {
-    id: "halfway",
-    title: "Halfway Hero",
-    description: "Complete 50 lessons.",
-    icon: ZapIcon,
-    target: 50,
-    progress: (stats) => stats.lessonsDone,
-  },
-  {
-    id: "explorer",
-    title: "Explorer",
-    description: "Start 3 different courses.",
-    icon: LayersIcon,
-    target: 3,
-    progress: (stats) => stats.coursesStarted,
-  },
-  {
-    id: "course-complete",
-    title: "Course Complete",
-    description: "Finish every lesson in a course.",
-    icon: AwardIcon,
-    target: 1,
-    progress: (stats) => stats.coursesCompleted,
-  },
-  {
-    id: "first-quiz",
-    title: "First Quiz",
-    description: "Take your first quiz.",
-    icon: TargetIcon,
-    target: 1,
-    progress: (stats) => stats.quizzesTaken,
-  },
-  {
-    id: "quiz-regular",
-    title: "Quiz Regular",
-    description: "Take 10 quizzes.",
-    icon: TargetIcon,
-    target: 10,
-    progress: (stats) => stats.quizzesTaken,
-  },
-  {
-    id: "high-achiever",
-    title: "High Achiever",
-    description: "Score 90% or more on a quiz.",
-    icon: TrophyIcon,
-    target: 90,
-    progress: (stats) => stats.bestScore,
-  },
-  {
-    id: "perfect",
-    title: "Perfect Score",
-    description: "Score 100% on a quiz.",
-    icon: StarIcon,
-    target: 100,
-    progress: (stats) => stats.bestScore,
-  },
-  {
-    id: "hard-mode",
-    title: "Hard Mode",
-    description: "Pass a Hard quiz with 70% or more.",
-    icon: ZapIcon,
-    target: 1,
-    progress: (stats) => stats.hardPassed,
-  },
-  {
-    id: "quiz-master",
-    title: "Quiz Master",
-    description: "Pass 10 different quizzes.",
-    icon: AwardIcon,
-    target: 10,
-    progress: (stats) => stats.quizzesPassed,
-  },
+  { id: "first-steps", title: "First Steps", description: "Complete your first lesson.", icon: BookOpenIcon, target: 1, progress: (s) => s.lessonsDone },
+  { id: "getting-started", title: "Getting Started", description: "Complete 5 lessons.", icon: BookOpenIcon, target: 5, progress: (s) => s.lessonsDone },
+  { id: "dedicated", title: "Dedicated Learner", description: "Complete 25 lessons.", icon: StarIcon, target: 25, progress: (s) => s.lessonsDone },
+  { id: "halfway", title: "Halfway Hero", description: "Complete 50 lessons.", icon: ZapIcon, target: 50, progress: (s) => s.lessonsDone },
+  { id: "explorer", title: "Explorer", description: "Start 3 different courses.", icon: LayersIcon, target: 3, progress: (s) => s.coursesStarted },
+  { id: "course-complete", title: "Course Complete", description: "Finish every lesson in a course.", icon: AwardIcon, target: 1, progress: (s) => s.coursesCompleted },
+  { id: "first-quiz", title: "First Quiz", description: "Take your first quiz.", icon: TargetIcon, target: 1, progress: (s) => s.quizzesTaken },
+  { id: "quiz-regular", title: "Quiz Regular", description: "Take 10 quizzes.", icon: TargetIcon, target: 10, progress: (s) => s.quizzesTaken },
+  { id: "high-achiever", title: "High Achiever", description: "Score 90% or more on a quiz.", icon: TrophyIcon, target: 90, unit: "%", progress: (s) => s.bestScore },
+  { id: "perfect", title: "Perfect Score", description: "Score 100% on a quiz.", icon: StarIcon, target: 100, unit: "%", progress: (s) => s.bestScore },
+  { id: "hard-mode", title: "Hard Mode", description: "Pass a Hard quiz with 70% or more.", icon: ZapIcon, target: 1, progress: (s) => s.hardPassed },
+  { id: "quiz-master", title: "Quiz Master", description: "Pass 10 different quizzes.", icon: AwardIcon, target: 10, progress: (s) => s.quizzesPassed },
 ];
 
 export function computeStats({ courses, completions, results }) {
@@ -145,10 +62,26 @@ export function computeStats({ courses, completions, results }) {
 export function evaluateAchievements(stats) {
   return achievements.map((achievement) => {
     const current = Math.min(achievement.progress(stats), achievement.target);
-    return {
-      ...achievement,
-      current,
-      earned: current >= achievement.target,
-    };
+    return { ...achievement, current, earned: current >= achievement.target };
   });
+}
+
+export async function loadAchievementData() {
+  const [courseRes, completionRes, resultRes] = await Promise.all([
+    supabase.from("courses").select("id, lessons(id)"),
+    supabase.from("completions").select("lesson_id"),
+    supabase.from("quiz_results").select("quiz_id, score, total, quizzes(difficulty)"),
+  ]);
+
+  if (courseRes.error || completionRes.error || resultRes.error) {
+    throw new Error("Could not load achievements");
+  }
+
+  const stats = computeStats({
+    courses: courseRes.data,
+    completions: completionRes.data,
+    results: resultRes.data,
+  });
+
+  return { stats, badges: evaluateAchievements(stats) };
 }
