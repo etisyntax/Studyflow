@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
+import { CheckIcon, SearchIcon, ClockIcon } from "../components/Icons";
 import "./Quizzes.css";
 
 const levelOrder = { easy: 1, medium: 2, hard: 3 };
 const levelLabels = { easy: "Easy", medium: "Medium", hard: "Hard" };
+
+function scoreClass(score) {
+  if (score >= 70) return "good";
+  if (score >= 50) return "ok";
+  return "low";
+}
 
 function Quizzes() {
   const [quizzes, setQuizzes] = useState([]);
@@ -27,6 +34,10 @@ function Quizzes() {
         .from("questions")
         .select("quiz_id");
 
+      const { data: resultData } = await supabase
+        .from("quiz_results")
+        .select("quiz_id, score, total");
+
       if (quizError || questionError) {
         setError("Could not load quizzes. Please try again.");
         setLoading(false);
@@ -38,9 +49,18 @@ function Quizzes() {
         counts[question.quiz_id] = (counts[question.quiz_id] || 0) + 1;
       });
 
+      const bests = {};
+      (resultData || []).forEach((attempt) => {
+        const percent = Math.round((attempt.score / attempt.total) * 100);
+        if (bests[attempt.quiz_id] === undefined || percent > bests[attempt.quiz_id]) {
+          bests[attempt.quiz_id] = percent;
+        }
+      });
+
       const list = quizData.map((quiz) => ({
         ...quiz,
         questionCount: counts[quiz.id] || 0,
+        bestScore: bests[quiz.id] ?? null,
       }));
 
       setQuizzes(list);
@@ -109,7 +129,14 @@ function Quizzes() {
                 <span className={`qt-badge ${quiz.difficulty}`}>
                   {levelLabels[quiz.difficulty]}
                 </span>
-                <span className="qt-time">⏱ {quiz.minutes} min</span>
+                {quiz.bestScore !== null && quiz.bestScore >= 70 && (
+                  <span className="qt-passed">
+                    <CheckIcon size={14} /> Passed
+                  </span>
+                )}
+                <span className="qt-time">
+                  <ClockIcon size={14} /> {quiz.minutes} min
+                </span>
               </div>
 
               <span className="qt-course">
@@ -128,13 +155,19 @@ function Quizzes() {
                 </div>
                 <div>
                   <span>Best score</span>
-                  <strong>New</strong>
+                  {quiz.bestScore === null ? (
+                    <strong>New</strong>
+                  ) : (
+                    <strong className={`qt-best ${scoreClass(quiz.bestScore)}`}>
+                      {quiz.bestScore}%
+                    </strong>
+                  )}
                 </div>
               </div>
 
               {quiz.questionCount > 0 ? (
                 <Link to={`/quizzes/${quiz.id}`} className="btn btn-primary qt-button">
-                  Start quiz
+                  {quiz.bestScore === null ? "Start quiz" : "Retake quiz"}
                 </Link>
               ) : (
                 <button className="btn qt-button qt-soon" disabled>
@@ -157,7 +190,7 @@ function Quizzes() {
 
       <div className="quiz-toolbar">
         <div className="qt-search">
-          <span>🔍</span>
+          <SearchIcon size={18} />
           <input
             type="text"
             placeholder="Search quizzes"

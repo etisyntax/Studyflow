@@ -193,4 +193,39 @@
   .quiz-toolbar {
     grid-template-columns: 1fr;
   }
+}.qt-time,
+.qt-passed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qt-top {
+  gap: 8px;
+}
+
+.qt-passed {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--success);
+  background: #ecfdf5;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.qt-search {
+  color: var(--muted);
+}
+
+.qt-best.good {
+  color: var(--success);
+}
+
+.qt-best.ok {
+  color: #d97706;
+}
+
+.qt-best.low {
+  color: var(--danger);
 }
