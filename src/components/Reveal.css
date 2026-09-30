@@ -1,0 +1,49 @@
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.7s ease,
+    transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, opacity;
+}
+
+.reveal[data-animation="up"] {
+  transform: translateY(60px);
+}
+
+.reveal[data-animation="drop"] {
+  transform: translateY(-90px) rotate(-3deg);
+}
+
+.reveal[data-animation="left"] {
+  transform: translateX(-100px);
+}
+
+.reveal[data-animation="right"] {
+  transform: translateX(100px);
+}
+
+.reveal[data-animation="zoom"] {
+  transform: scale(0.6);
+}
+
+.reveal[data-animation="flip"] {
+  transform: perspective(900px) rotateX(-70deg);
+  transform-origin: top center;
+}
+
+.reveal[data-animation="none"] {
+  opacity: 1;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none !important;
+    transition: none;
+  }
+}
