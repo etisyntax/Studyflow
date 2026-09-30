@@ -117,4 +117,22 @@ export function BarChartIcon(props) {
       <line x1="6" y1="20" x2="6" y2="16" />
     </Svg>
   );
+}export function LayersIcon(props) {
+  return (
+    <Svg {...props}>
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </Svg>
+  );
+}
+
+export function TargetIcon(props) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
+    </Svg>
+  );
 }
