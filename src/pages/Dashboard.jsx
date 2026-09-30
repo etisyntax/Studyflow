@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import AchievementsPanel from "../components/AchievementsPanel";
+import CountUp from "../components/CountUp";
 import { computeStats, evaluateAchievements } from "../lib/achievements";
 import {
   BookOpenIcon,
@@ -138,9 +139,18 @@ function Dashboard() {
 
   const badges = evaluateAchievements(computeStats({ courses, completions, results }));
 
+  const statCards = [
+    { icon: BookOpenIcon, color: "#4f46e5", value: lessonsDone, total: totalLessons, label: "Lessons completed" },
+    { icon: LayersIcon, color: "#0891b2", value: coursesStarted, label: "Courses started" },
+    { icon: TargetIcon, color: "#db2777", value: quizzesTaken, label: "Quizzes taken" },
+    { icon: BarChartIcon, color: "#d97706", value: averageScore, suffix: "%", label: "Average quiz score" },
+  ];
+
   return (
     <div className="dashboard">
       <div className="dash-header">
+        <span className="dash-circle one"></span>
+        <span className="dash-circle two"></span>
         <p className="dash-date">{today}</p>
         <h1 className="dash-title">
           {getGreeting()}
@@ -150,45 +160,28 @@ function Dashboard() {
       </div>
 
       <div className="dash-stats">
-        <div className="dash-stat">
-          <span className="dash-stat-icon">
-            <BookOpenIcon />
-          </span>
-          <div>
-            <strong>
-              {lessonsDone}
-              <small> / {totalLessons}</small>
-            </strong>
-            <span>Lessons completed</span>
-          </div>
-        </div>
-        <div className="dash-stat">
-          <span className="dash-stat-icon">
-            <LayersIcon />
-          </span>
-          <div>
-            <strong>{coursesStarted}</strong>
-            <span>Courses started</span>
-          </div>
-        </div>
-        <div className="dash-stat">
-          <span className="dash-stat-icon">
-            <TargetIcon />
-          </span>
-          <div>
-            <strong>{quizzesTaken}</strong>
-            <span>Quizzes taken</span>
-          </div>
-        </div>
-        <div className="dash-stat">
-          <span className="dash-stat-icon">
-            <BarChartIcon />
-          </span>
-          <div>
-            <strong>{averageScore}%</strong>
-            <span>Average quiz score</span>
-          </div>
-        </div>
+        {statCards.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={stat.label}
+              className="dash-stat"
+              style={{ "--accent": stat.color, "--i": index }}
+            >
+              <span className="dash-stat-icon">
+                <Icon />
+              </span>
+              <div>
+                <strong>
+                  <CountUp end={stat.value} />
+                  {stat.suffix}
+                  {stat.total !== undefined && <small> / {stat.total}</small>}
+                </strong>
+                <span>{stat.label}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="dash-grid">
@@ -224,12 +217,12 @@ function Dashboard() {
             </div>
 
             <div className="course-progress-list">
-              {activeCourses.map((course) => (
+              {activeCourses.map((course, index) => (
                 <Link
                   key={course.id}
                   to={`/courses/${course.id}`}
                   className="cp-row"
-                  style={{ "--course-color": course.color }}
+                  style={{ "--course-color": course.color, "--i": index }}
                 >
                   <span className="cp-dot"></span>
                   <div className="cp-info">
@@ -267,8 +260,8 @@ function Dashboard() {
               </p>
             ) : (
               <ul className="activity-list">
-                {activity.map((item) => (
-                  <li key={item.key} className="activity-item">
+                {activity.map((item, index) => (
+                  <li key={item.key} className="activity-item" style={{ "--i": index }}>
                     <span className={`activity-icon ${item.type}`}>
                       {item.type === "lesson" ? <CheckIcon size={16} /> : <TargetIcon size={16} />}
                     </span>

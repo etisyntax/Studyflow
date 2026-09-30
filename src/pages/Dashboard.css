@@ -490,3 +490,210 @@
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
   animation: pop 0.4s ease both;
 }
+/* Round 2: colour and motion */
+
+.dash-header {
+  position: relative;
+  overflow: hidden;
+  padding: 32px 36px;
+  margin-bottom: 24px;
+  border-radius: 24px;
+  color: #fff;
+  background: linear-gradient(120deg, #4f46e5, #7c3aed 55%, #db2777);
+  background-size: 200% 200%;
+  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.25);
+  animation: dashGradient 12s ease infinite, dashRise 0.5s ease both;
+}
+
+.dash-header .dash-date {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dash-header .dash-title {
+  color: #fff;
+}
+
+.dash-header .dash-subtitle {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dash-header > * {
+  position: relative;
+}
+
+.dash-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  animation: dashFloat 8s ease-in-out infinite;
+}
+
+.dash-circle.one {
+  width: 200px;
+  height: 200px;
+  top: -80px;
+  right: -40px;
+}
+
+.dash-circle.two {
+  width: 110px;
+  height: 110px;
+  bottom: -50px;
+  right: 22%;
+  animation-delay: -4s;
+}
+
+.dash-stat {
+  position: relative;
+  overflow: hidden;
+  animation: dashRise 0.5s ease both;
+  animation-delay: calc(var(--i, 0) * 0.08s + 0.1s);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dash-stat::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.dash-stat:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.dash-stat .dash-stat-icon {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, white);
+  transition: transform 0.3s ease;
+}
+
+.dash-stat:hover .dash-stat-icon {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.continue-card {
+  animation: dashRise 0.5s ease 0.35s both;
+}
+
+.continue-progress div,
+.cp-bar div,
+.ach-next-bar div {
+  animation: barFill 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.continue-progress div {
+  animation-delay: 0.6s;
+}
+
+.cp-bar div {
+  animation-delay: calc(var(--i, 0) * 0.1s + 0.5s);
+}
+
+.continue-card .btn {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.continue-card .btn svg {
+  transition: transform 0.2s ease-out;
+}
+
+.dash-panel {
+  animation: dashRise 0.5s ease 0.45s both;
+}
+
+.cp-row {
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.activity-item {
+  animation: dashSlide 0.45s ease both;
+  animation-delay: calc(var(--i, 0) * 0.07s + 0.6s);
+}
+
+@media (hover: hover) {
+  .continue-card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .continue-card .btn:hover svg {
+    transform: translateX(4px);
+  }
+
+  .cp-row:hover {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes dashRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashSlide {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes barFill {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes dashFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(14px);
+  }
+}
+
+@keyframes dashGradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@media (max-width: 600px) {
+  .dash-header {
+    padding: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-header,
+  .dash-circle,
+  .dash-stat,
+  .continue-card,
+  .dash-panel,
+  .activity-item,
+  .continue-progress div,
+  .cp-bar div,
+  .ach-next-bar div {
+    animation: none;
+  }
+}

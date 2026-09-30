@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from "react-router";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { AchievementProvider } from "../context/AchievementContext";
@@ -54,6 +54,7 @@ const links = [
 function AppLayout() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const name = profile && profile.full_name ? profile.full_name : user.email;
   const initial = name.charAt(0).toUpperCase();
@@ -101,7 +102,9 @@ function AppLayout() {
         </aside>
 
         <main className="app-content">
-          <Outlet />
+          <div key={location.pathname} className="page-transition">
+            <Outlet />
+          </div>
         </main>
       </div>
     </AchievementProvider>
