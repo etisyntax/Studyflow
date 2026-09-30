@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
+import AchievementsPanel from "../components/AchievementsPanel";
+import { computeStats, evaluateAchievements } from "../lib/achievements";
 import {
   BookOpenIcon,
   CheckIcon,
@@ -52,7 +54,7 @@ function Dashboard() {
           .order("completed_at", { ascending: false }),
         supabase
           .from("quiz_results")
-          .select("id, score, total, taken_at, quiz_id, quizzes(title)")
+          .select("id, score, total, taken_at, quiz_id, quizzes(title, difficulty)")
           .order("taken_at", { ascending: false }),
       ]);
 
@@ -134,6 +136,8 @@ function Dashboard() {
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 6);
 
+  const badges = evaluateAchievements(computeStats({ courses, completions, results }));
+
   return (
     <div className="dashboard">
       <div className="dash-header">
@@ -190,10 +194,7 @@ function Dashboard() {
       <div className="dash-grid">
         <div className="dash-main">
           {continueCourse && (
-            <div
-              className="continue-card"
-              style={{ "--course-color": continueCourse.color }}
-            >
+            <div className="continue-card" style={{ "--course-color": continueCourse.color }}>
               <span className="continue-label">
                 {lessonsDone === 0 ? "Start learning" : "Continue learning"}
               </span>
@@ -249,37 +250,37 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="dash-panel dash-activity">
-          <div className="panel-head">
-            <h2>Recent activity</h2>
-            <Link to="/history" className="panel-link">
-              History
-            </Link>
-          </div>
+        <div className="dash-side">
+          <AchievementsPanel badges={badges} />
 
-          {activity.length === 0 ? (
-            <p className="activity-empty">
-              Your completed lessons and quiz scores will appear here.
-            </p>
-          ) : (
-            <ul className="activity-list">
-              {activity.map((item) => (
-                <li key={item.key} className="activity-item">
-                  <span className={`activity-icon ${item.type}`}>
-                    {item.type === "lesson" ? (
-                      <CheckIcon size={16} />
-                    ) : (
-                      <TargetIcon size={16} />
-                    )}
-                  </span>
-                  <div>
-                    <p>{item.text}</p>
-                    <span>{timeAgo(item.date)}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="dash-panel">
+            <div className="panel-head">
+              <h2>Recent activity</h2>
+              <Link to="/history" className="panel-link">
+                History
+              </Link>
+            </div>
+
+            {activity.length === 0 ? (
+              <p className="activity-empty">
+                Your completed lessons and quiz scores will appear here.
+              </p>
+            ) : (
+              <ul className="activity-list">
+                {activity.map((item) => (
+                  <li key={item.key} className="activity-item">
+                    <span className={`activity-icon ${item.type}`}>
+                      {item.type === "lesson" ? <CheckIcon size={16} /> : <TargetIcon size={16} />}
+                    </span>
+                    <div>
+                      <p>{item.text}</p>
+                      <span>{timeAgo(item.date)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>
