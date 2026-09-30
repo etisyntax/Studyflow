@@ -92,6 +92,9 @@ const workerSource = `
   };
 
   self.onmessage = function (event) {
+    const code = event.data.code;
+    const mode = event.data.mode;
+
     const send = function (...args) {
       self.postMessage({ type: "log", text: args.map(format).join(" ") });
     };
@@ -101,11 +104,33 @@ const workerSource = `
     console.warn = send;
     console.error = send;
 
+    let source = code;
+
+    if (mode === "typescript") {
+      try {
+        if (!self.Babel) {
+          self.postMessage({ type: "status", text: "Loading the TypeScript compiler..." });
+          importScripts("https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js");
+        }
+        source = self.Babel.transform(code, {
+          filename: "lesson.ts",
+          presets: [["typescript", { allExtensions: true }]],
+          parserOpts: { allowAwaitOutsideFunction: true },
+        }).code;
+      } catch (error) {
+        const text = error.name === "NetworkError"
+          ? "Could not load the TypeScript compiler. Please check your internet connection."
+          : error.name + ": " + error.message;
+        self.postMessage({ type: "error", text: text });
+        return;
+      }
+    }
+
     const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
     let run;
     try {
-      run = new AsyncFunction(event.data);
+      run = new AsyncFunction(source);
     } catch (error) {
       self.postMessage({ type: "error", text: error.name + ": " + error.message });
       return;
@@ -142,7 +167,7 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
     };
   }, [expanded]);
 
-  function runJavaScript() {
+  function runScript() {
     setRunning(true);
     setOutput([]);
 
@@ -160,7 +185,8 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
       clearTimeout(hardTimer);
       worker.terminate();
       URL.revokeObjectURL(url);
-      if (lines.length === 0) {
+      const printed = lines.some((line) => line.type !== "info");
+      if (!printed) {
         lines.push({
           type: "info",
           text: "Your code ran, but nothing was printed. Use console.log() to show output.",
@@ -175,23 +201,30 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
       finish();
     }
 
-    function resetIdle() {
+    function resetIdle(ms = 5000) {
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => {
         stopWith(
-          "Your code went 5 seconds without finishing and was stopped. Check for an infinite loop, or a timer that never stops."
+          "Your code went too long without finishing and was stopped. Check for an infinite loop, or a timer that never stops."
         );
-      }, 5000);
+      }, ms);
     }
 
     const hardTimer = setTimeout(() => {
-      stopWith("Your code ran for more than 15 seconds and was stopped.");
-    }, 15000);
+      stopWith("Your code ran for more than 30 seconds and was stopped.");
+    }, 30000);
 
     resetIdle();
 
     worker.onmessage = (event) => {
       const message = event.data;
+
+      if (message.type === "status") {
+        lines.push({ type: "info", text: message.text });
+        setOutput([...lines]);
+        resetIdle(25000);
+        return;
+      }
 
       if (message.type === "log" || message.type === "log-error") {
         lines.push({ type: message.type === "log" ? "log" : "error", text: message.text });
@@ -207,14 +240,14 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
       finish();
     };
 
-    worker.postMessage(code);
+    worker.postMessage({ code, mode });
   }
 
   function runCode() {
     if (isHtml) {
       setPreview(code);
     } else {
-      runJavaScript();
+      runScript();
     }
   }
 
@@ -246,6 +279,10 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
     }
   }
 
+  let title = "Code Playground";
+  if (isHtml) title = "HTML and CSS Playground";
+  if (mode === "typescript") title = "TypeScript Playground";
+
   return (
     <div className={`playground ${expanded ? "expanded" : ""}`}>
       <div className="playground-header">
@@ -254,9 +291,7 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
           <span></span>
           <span></span>
         </div>
-        <span className="playground-title">
-          {isHtml ? "HTML and CSS Playground" : "Code Playground"}
-        </span>
+        <span className="playground-title">{title}</span>
         <div className="playground-actions">
           <button className="pg-btn pg-reset" onClick={resetCode}>
             Reset
