@@ -141,9 +141,9 @@ function Dashboard() {
 
   const statCards = [
     { icon: BookOpenIcon, color: "#4f46e5", value: lessonsDone, total: totalLessons, label: "Lessons completed" },
-    { icon: LayersIcon, color: "#0891b2", value: coursesStarted, label: "Courses started" },
-    { icon: TargetIcon, color: "#db2777", value: quizzesTaken, label: "Quizzes taken" },
-    { icon: BarChartIcon, color: "#d97706", value: averageScore, suffix: "%", label: "Average quiz score" },
+    { icon: LayersIcon, color: "#6d28d9", value: coursesStarted, label: "Courses started" },
+    { icon: TargetIcon, color: "#7c3aed", value: quizzesTaken, label: "Quizzes taken" },
+    { icon: BarChartIcon, color: "#9333ea", value: averageScore, suffix: "%", label: "Average quiz score" },
   ];
 
   return (
