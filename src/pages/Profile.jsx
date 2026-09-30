@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { loadAchievementData } from "../lib/achievements";
-import { LockIcon, EditIcon, CheckIcon } from "../components/Icons";
+import CountUp from "../components/CountUp";
+import {
+  LockIcon,
+  EditIcon,
+  CheckIcon,
+  BookOpenIcon,
+  LayersIcon,
+  TrophyIcon,
+} from "../components/Icons";
 import "./Profile.css";
 
 function Profile() {
@@ -54,9 +62,13 @@ function Profile() {
 
   const fullName = profile && profile.full_name ? profile.full_name : user.email;
   const initial = fullName.charAt(0).toUpperCase();
-  const memberSince = profile && profile.created_at
-    ? new Date(profile.created_at).toLocaleDateString("en-GB", { month: "long", year: "numeric" })
-    : "";
+  const memberSince =
+    profile && profile.created_at
+      ? new Date(profile.created_at).toLocaleDateString("en-GB", {
+          month: "long",
+          year: "numeric",
+        })
+      : "";
 
   if (error) return <div className="page-message error">{error}</div>;
   if (!data) return <div className="page-message">Loading your profile...</div>;
@@ -64,51 +76,88 @@ function Profile() {
   const { stats, badges } = data;
   const earnedCount = badges.filter((badge) => badge.earned).length;
 
+  const statCards = [
+    { icon: BookOpenIcon, color: "#4f46e5", value: stats.lessonsDone, label: "Lessons completed" },
+    { icon: LayersIcon, color: "#6d28d9", value: stats.coursesCompleted, label: "Courses completed" },
+    { icon: CheckIcon, color: "#7c3aed", value: stats.quizzesPassed, label: "Quizzes passed" },
+    { icon: TrophyIcon, color: "#9333ea", value: stats.bestScore, suffix: "%", label: "Best quiz score" },
+  ];
+
   return (
     <div className="profile-page">
       <div className="profile-card">
-        <div className="profile-avatar">{initial}</div>
+        <div className="profile-cover">
+          <span className="cover-circle one"></span>
+          <span className="cover-circle two"></span>
+        </div>
 
-        <div className="profile-info">
-          {editing ? (
-            <form onSubmit={saveName} className="name-form">
-              <input
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                autoFocus
-              />
-              <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? "Saving..." : "Save"}
-              </button>
-              <button type="button" className="btn btn-outline" onClick={() => setEditing(false)}>
-                Cancel
-              </button>
-            </form>
-          ) : (
-            <div className="name-row">
-              <h1>{fullName}</h1>
-              <button className="edit-btn" onClick={startEditing} aria-label="Edit your name">
-                <EditIcon size={16} /> Edit
-              </button>
-            </div>
-          )}
-          <p className="profile-email">{user.email}</p>
-          {memberSince && <p className="profile-since">Member since {memberSince}</p>}
-          {message && <p className="profile-message">{message}</p>}
+        <div className="profile-main">
+          <div className="profile-avatar">{initial}</div>
+
+          <div className="profile-info">
+            {editing ? (
+              <form onSubmit={saveName} className="name-form">
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  autoFocus
+                />
+                <button type="submit" className="btn btn-primary" disabled={saving}>
+                  {saving ? "Saving..." : "Save"}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => setEditing(false)}
+                >
+                  Cancel
+                </button>
+              </form>
+            ) : (
+              <div className="name-row">
+                <h1>{fullName}</h1>
+                <button className="edit-btn" onClick={startEditing} aria-label="Edit your name">
+                  <EditIcon size={16} /> Edit
+                </button>
+              </div>
+            )}
+            <p className="profile-email">{user.email}</p>
+            {memberSince && <p className="profile-since">Member since {memberSince}</p>}
+            {message && <p className="profile-message">{message}</p>}
+          </div>
         </div>
       </div>
 
       <div className="profile-stats">
-        <div><strong>{stats.lessonsDone}</strong><span>Lessons completed</span></div>
-        <div><strong>{stats.coursesCompleted}</strong><span>Courses completed</span></div>
-        <div><strong>{stats.quizzesPassed}</strong><span>Quizzes passed</span></div>
-        <div><strong>{stats.bestScore}%</strong><span>Best quiz score</span></div>
+        {statCards.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={stat.label}
+              className="profile-stat"
+              style={{ "--accent": stat.color, "--i": index }}
+            >
+              <span className="profile-stat-icon">
+                <Icon />
+              </span>
+              <div>
+                <strong>
+                  <CountUp end={stat.value} />
+                  {stat.suffix}
+                </strong>
+                <span>{stat.label}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="badges-head">
         <div>
           <h2>Achievements</h2>
-          <p>{earnedCount} of {badges.length} badges earned</p>
+          <p>
+            {earnedCount} of {badges.length} badges earned
+          </p>
         </div>
         <div className="badges-total">
           <div style={{ width: `${(earnedCount / badges.length) * 100}%` }}></div>
@@ -124,7 +173,7 @@ function Profile() {
             <div
               key={badge.id}
               className={`badge-card ${badge.earned ? "earned" : "locked"}`}
-              style={{ animationDelay: `${Math.min(index, 11) * 0.04}s` }}
+              style={{ "--i": Math.min(index, 11) }}
             >
               <div className="badge-icon">
                 <Icon size={26} />
@@ -147,7 +196,9 @@ function Profile() {
                     <div style={{ width: `${(badge.current / badge.target) * 100}%` }}></div>
                   </div>
                   <span>
-                    {badge.current}{unit} / {badge.target}{unit}
+                    {badge.current}
+                    {unit} / {badge.target}
+                    {unit}
                   </span>
                 </div>
               )}

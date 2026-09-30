@@ -1,64 +1,172 @@
-.back-link {
-  display: inline-block;
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 24px;
+.course-detail {
+  max-width: 1000px;
 }
 
-.back-link:hover {
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-weight: 700;
   color: var(--primary);
 }
 
-.course-hero {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-  margin-bottom: 28px;
+.back-icon {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
 }
 
-.course-hero-icon {
-  width: 80px;
-  height: 80px;
+/* Hero banner in the course colour */
+
+.cd-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 30px;
+  margin-bottom: 24px;
+  border-radius: 24px;
+  color: #fff;
+  background: linear-gradient(
+    120deg,
+    var(--course-color),
+    color-mix(in srgb, var(--course-color) 55%, #1e1b4b)
+  );
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--course-color) 30%, transparent);
+  animation: cdRise 0.5s ease both;
+}
+
+.cd-hero > *:not(.cd-circle) {
+  position: relative;
+}
+
+.cd-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  animation: cdFloat 8s ease-in-out infinite;
+}
+
+.cd-circle.one {
+  width: 220px;
+  height: 220px;
+  top: -90px;
+  right: -50px;
+}
+
+.cd-circle.two {
+  width: 110px;
+  height: 110px;
+  bottom: -55px;
+  right: 34%;
+  animation-delay: -4s;
+}
+
+.cd-mark {
+  width: 76px;
+  height: 76px;
   flex-shrink: 0;
   border-radius: 22px;
   display: grid;
   place-items: center;
-  font-size: 2.4rem;
-  background: color-mix(in srgb, var(--course-color) 15%, white);
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  animation: cdPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
 }
 
-.detail-level {
+.cd-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.cd-level {
   display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--course-color);
-  background: color-mix(in srgb, var(--course-color) 12%, white);
+  margin-bottom: 8px;
   padding: 4px 12px;
   border-radius: 999px;
-  margin-bottom: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.25);
 }
 
-.course-hero h1 {
+.cd-text h1 {
+  margin-bottom: 6px;
   font-size: clamp(1.7rem, 4vw, 2.3rem);
   line-height: 1.2;
-  margin-bottom: 8px;
+  color: #fff;
 }
 
-.course-hero p {
-  color: var(--muted);
-  max-width: 640px;
+.cd-text p {
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.88);
 }
+
+.cd-ring {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  flex-shrink: 0;
+  animation: cdPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+
+.cd-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.cd-ring-bg {
+  fill: rgba(255, 255, 255, 0.12);
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 7;
+}
+
+.cd-ring-fill {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 214;
+  animation: cdRing 1.2s ease 0.4s both;
+}
+
+.cd-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cd-ring-text strong {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.cd-ring-text span {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Progress card */
 
 .progress-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 36px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  padding: 24px;
+  margin-bottom: 32px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  animation: cdRise 0.5s ease 0.15s both;
 }
 
 .progress-info {
@@ -72,36 +180,54 @@
 }
 
 .progress-info span {
-  color: var(--muted);
   font-size: 0.9rem;
+  color: var(--muted);
 }
 
 .course-progress-track {
   height: 12px;
-  background: var(--bg);
-  border-radius: 999px;
   overflow: hidden;
+  border-radius: 999px;
+  background: #ede9fe;
 }
 
 .course-progress-bar {
   height: 100%;
-  background: var(--course-color);
   border-radius: 999px;
-  transition: width 0.8s ease;
+  background: linear-gradient(90deg, var(--course-color), #a855f7);
+  animation: cdFill 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s both;
 }
 
-.progress-card .btn {
+.cd-continue {
   align-self: flex-start;
+  gap: 8px;
+}
+
+.cd-continue svg {
+  transition: transform 0.2s ease;
 }
 
 .course-done {
-  font-weight: 600;
-  color: var(--success);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #7c3aed;
 }
 
+/* Lesson list */
+
 .lessons-heading {
-  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 16px;
+  font-size: 1.3rem;
+  animation: cdRise 0.5s ease 0.25s both;
+}
+
+.lessons-heading svg {
+  color: var(--course-color);
 }
 
 .lesson-list {
@@ -113,29 +239,45 @@
 .lesson-row {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+  padding: 14px 18px;
+  color: var(--text);
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 20px;
-  transition: all 0.2s ease;
-}
-
-.lesson-row:hover {
-  border-color: var(--course-color);
-  transform: translateX(6px);
+  border-radius: 16px;
+  animation: cdSlide 0.4s ease both;
+  animation-delay: calc(var(--i, 0) * 0.04s + 0.3s);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .lesson-number {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
   font-weight: 800;
-  font-size: 0.95rem;
-  color: var(--muted);
-  min-width: 28px;
+  color: var(--course-color);
+  background: color-mix(in srgb, var(--course-color) 10%, white);
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .lesson-title {
   flex: 1;
+  min-width: 0;
   font-weight: 600;
+}
+
+.lesson-next-tag {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
 }
 
 .lesson-status {
@@ -143,58 +285,154 @@
   height: 28px;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 2px solid var(--border);
   display: grid;
   place-items: center;
-  font-size: 0.85rem;
-  font-weight: 700;
   color: #fff;
+  border: 2px solid #ddd6fe;
 }
 
 .lesson-row.done .lesson-status {
-  background: var(--success);
-  border-color: var(--success);
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, #6d28d9, #a855f7);
 }
 
 .lesson-row.done .lesson-number {
-  color: var(--success);
+  color: #fff;
+  background: var(--course-color);
+}
+
+.lesson-row.next {
+  border-color: #c4b5fd;
+  background: #faf8ff;
+}
+
+/* Hover effects on devices with a mouse */
+
+@media (hover: hover) {
+  .back-link:hover .back-icon {
+    transform: rotate(180deg) translateX(4px);
+  }
+
+  .cd-continue:hover svg {
+    transform: translateX(4px);
+  }
+
+  .lesson-row:hover {
+    transform: translateX(6px);
+    border-color: color-mix(in srgb, var(--course-color) 45%, white);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--course-color) 15%, transparent);
+  }
+
+  .lesson-row:hover .lesson-number {
+    color: #fff;
+    background: var(--course-color);
+  }
+}
+
+/* Keyframes */
+
+@keyframes cdRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cdSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes cdPop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes cdFill {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes cdRing {
+  from {
+    stroke-dashoffset: 214;
+  }
+}
+
+@keyframes cdFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(14px);
+  }
+}
+
+/* Phones */
+
+@media (max-width: 700px) {
+  .cd-hero {
+    flex-wrap: wrap;
+    padding: 24px;
+  }
+
+  .cd-mark {
+    width: 60px;
+    height: 60px;
+    font-size: 1.7rem;
+  }
+
+  .cd-text {
+    flex-basis: 100%;
+    order: 3;
+  }
+
+  .cd-ring {
+    width: 84px;
+    height: 84px;
+    margin-left: auto;
+  }
 }
 
 @media (max-width: 600px) {
-  .course-hero {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .progress-card .btn {
+  .cd-continue {
     align-self: stretch;
+    justify-content: center;
+  }
+
+  .lesson-next-tag {
+    display: none;
   }
 }
-.quiz-cta {
-  margin-top: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding: 24px 28px;
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--course-color) 12%, white);
-  border: 2px solid color-mix(in srgb, var(--course-color) 35%, white);
-}
 
-.quiz-cta h3 {
-  font-size: 1.2rem;
-  margin-bottom: 4px;
-}
-
-.quiz-cta p {
-  color: var(--muted);
-}
-
-@media (max-width: 600px) {
-  .quiz-cta {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
+@media (prefers-reduced-motion: reduce) {
+  .cd-hero,
+  .cd-circle,
+  .cd-mark,
+  .cd-ring,
+  .cd-ring-fill,
+  .progress-card,
+  .course-progress-bar,
+  .lessons-heading,
+  .lesson-row {
+    animation: none;
   }
 }

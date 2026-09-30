@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAchievements } from "../context/AchievementContext";
+import CountUp from "../components/CountUp";
 import {
   CheckIcon,
   XIcon,
@@ -14,6 +15,42 @@ import "./Quiz.css";
 
 const letters = ["A", "B", "C", "D"];
 const RING = 327;
+const levelLabels = { easy: "Easy", medium: "Medium", hard: "Hard" };
+
+const confettiColors = ["#4f46e5", "#6d28d9", "#7c3aed", "#a855f7", "#c084fc", "#e9d5ff"];
+
+const confettiPieces = Array.from({ length: 70 }, (_, index) => ({
+  id: index,
+  left: Math.random() * 100,
+  delay: Math.random() * 0.8,
+  duration: 2.6 + Math.random() * 1.8,
+  size: 6 + Math.random() * 6,
+  spin: Math.random() > 0.5 ? 1 : -1,
+  round: Math.random() > 0.6,
+  color: confettiColors[index % confettiColors.length],
+}));
+
+function Confetti() {
+  return (
+    <div className="confetti" aria-hidden="true">
+      {confettiPieces.map((piece) => (
+        <span
+          key={piece.id}
+          className={`confetti-piece ${piece.round ? "round" : ""}`}
+          style={{
+            left: `${piece.left}%`,
+            width: `${piece.size}px`,
+            height: `${piece.round ? piece.size : piece.size * 1.6}px`,
+            background: piece.color,
+            animationDelay: `${piece.delay}s`,
+            animationDuration: `${piece.duration}s`,
+            "--spin": piece.spin,
+          }}
+        ></span>
+      ))}
+    </div>
+  );
+}
 
 function shuffle(items) {
   const copy = [...items];
@@ -56,7 +93,7 @@ function Quiz() {
       const { data: quizData, error: quizError } = await supabase
         .from("quizzes")
         .select(
-          "id, course_id, position, title, difficulty, minutes, lesson_from, lesson_to, courses(id, title, icon, color)"
+          "id, course_id, position, title, difficulty, minutes, lesson_from, lesson_to, courses(id, title, color)"
         )
         .eq("id", quizId)
         .single();
@@ -66,37 +103,32 @@ function Quiz() {
         return;
       }
 
-      const { data: questionData, error: questionError } = await supabase
-        .from("questions")
-        .select("id, question, options")
-        .eq("quiz_id", quizId);
+      const [questionRes, nextRes, pastRes] = await Promise.all([
+        supabase.from("questions").select("id, question, options").eq("quiz_id", quizId),
+        supabase
+          .from("quizzes")
+          .select("id, title, difficulty")
+          .eq("course_id", quizData.course_id)
+          .eq("position", quizData.position + 1)
+          .maybeSingle(),
+        supabase.from("quiz_results").select("score, total").eq("quiz_id", quizId),
+      ]);
 
-      if (questionError || questionData.length === 0) {
+      if (questionRes.error || questionRes.data.length === 0) {
         setError("This quiz has no questions yet. Please check back soon.");
         return;
       }
 
-      const { data: nextData } = await supabase
-        .from("quizzes")
-        .select("id, title, difficulty")
-        .eq("course_id", quizData.course_id)
-        .eq("position", quizData.position + 1)
-        .maybeSingle();
-
-      const { data: pastResults } = await supabase
-        .from("quiz_results")
-        .select("score, total")
-        .eq("quiz_id", quizId);
-
+      const pastResults = pastRes.data;
       const best =
         pastResults && pastResults.length > 0
           ? Math.max(...pastResults.map((item) => Math.round((item.score / item.total) * 100)))
           : null;
 
       setQuiz(quizData);
-      setNextQuiz(nextData);
+      setNextQuiz(nextRes.data);
       setPreviousBest(best);
-      setQuestions(shuffle(questionData));
+      setQuestions(shuffle(questionRes.data));
       setStage("question");
     }
 
@@ -200,7 +232,7 @@ function Quiz() {
     return (
       <div className="quiz-page">
         <Link to="/quizzes" className="back-link">
-          ← All quizzes
+          <ArrowRightIcon size={16} className="back-icon" /> All quizzes
         </Link>
         {error ? (
           <div className="page-message error">{error}</div>
@@ -223,16 +255,20 @@ function Quiz() {
 
   return (
     <div className="quiz-page" style={{ "--course-color": quiz.courses.color }}>
+      {stage === "finished" && passed && <Confetti />}
+
       <Link to="/quizzes" className="back-link">
-        ← All quizzes
+        <ArrowRightIcon size={16} className="back-icon" /> All quizzes
       </Link>
 
-      <div className="quiz-header">
-        <div className="quiz-header-icon">{quiz.courses.icon}</div>
-        <div>
-          <span className={`level-badge level-${quiz.difficulty}`}>{quiz.difficulty}</span>
+      <div className="quiz-hero">
+        <span className="qh-circle one"></span>
+        <span className="qh-circle two"></span>
+        <span className="qh-mark">{quiz.courses.title.charAt(0)}</span>
+        <div className="qh-text">
+          <span className={`qh-level ${quiz.difficulty}`}>{levelLabels[quiz.difficulty]}</span>
           <h1>{quiz.title}</h1>
-          <p className="quiz-subtitle">
+          <p>
             {quiz.courses.title} · {questions.length} questions · {quiz.minutes} min
           </p>
         </div>
@@ -244,7 +280,7 @@ function Quiz() {
             <span className="quiz-count">
               Question {current + 1} of {questions.length}
             </span>
-            <span className="quiz-count">Score: {score}</span>
+            <span className="quiz-score">Score: {score}</span>
           </div>
 
           <div className="quiz-progress">
@@ -270,6 +306,7 @@ function Quiz() {
                   <button
                     key={index}
                     className={`option ${state}`}
+                    style={{ "--i": index }}
                     onClick={() => chooseAnswer(index)}
                     disabled={selected !== null}
                   >
@@ -295,7 +332,8 @@ function Quiz() {
 
             {result && (
               <button className="btn btn-primary btn-large next-btn" onClick={nextQuestion}>
-                {current + 1 < questions.length ? "Next question →" : "See my results →"}
+                {current + 1 < questions.length ? "Next question" : "See my results"}
+                <ArrowRightIcon size={18} />
               </button>
             )}
           </div>
@@ -306,6 +344,12 @@ function Quiz() {
         <div className="quiz-card quiz-results">
           <div className="score-ring">
             <svg viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="quizRingGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#4f46e5" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
               <circle className="ring-bg" cx="60" cy="60" r="52" />
               <circle
                 className="ring-fill"
@@ -316,7 +360,9 @@ function Quiz() {
               />
             </svg>
             <div className="ring-text">
-              <strong>{percent}%</strong>
+              <strong>
+                <CountUp end={percent} duration={1200} />%
+              </strong>
               <span>
                 {finalScore} / {finalTotal}
               </span>
@@ -343,7 +389,7 @@ function Quiz() {
               <strong>{finalTotal - finalScore}</strong>
               <span>Wrong</span>
             </div>
-            <div className="stat">
+            <div className="stat best">
               <TrophyIcon size={18} />
               <strong>{previousBest === null ? "First" : `${previousBest}%`}</strong>
               <span>{previousBest === null ? "Attempt" : "Previous best"}</span>
@@ -366,7 +412,7 @@ function Quiz() {
                 <div>
                   <strong>Ready for the next challenge?</strong>
                   <p>
-                    Up next: {nextQuiz.title} ({nextQuiz.difficulty})
+                    Up next: {nextQuiz.title} ({levelLabels[nextQuiz.difficulty]})
                   </p>
                 </div>
                 <Link to={`/quizzes/${nextQuiz.id}`} className="btn btn-primary">
@@ -413,7 +459,11 @@ function Quiz() {
           {showReview && (
             <div className="review-list">
               {answers.map((item, index) => (
-                <div key={index} className={`review-item ${item.isCorrect ? "good" : "bad"}`}>
+                <div
+                  key={index}
+                  className={`review-item ${item.isCorrect ? "good" : "bad"}`}
+                  style={{ "--i": Math.min(index, 10) }}
+                >
                   <div className="review-head">
                     <span className="review-icon">
                       {item.isCorrect ? <CheckIcon size={16} /> : <XIcon size={16} />}

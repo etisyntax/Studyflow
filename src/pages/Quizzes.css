@@ -148,19 +148,23 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.qt-badge {
   color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .qt-badge.easy {
-  background: #10b981;
+  background: #a78bfa;
 }
 
 .qt-badge.medium {
-  background: #f59e0b;
+  background: #7c3aed;
 }
 
 .qt-badge.hard {
-  background: #ef4444;
+  background: #3b0764;
 }
 
 .qt-passed {
@@ -233,7 +237,7 @@
 .qt-stats div {
   padding: 10px 12px;
   border-radius: 12px;
-  background: var(--bg);
+  background: #f8f7ff;
 }
 
 .qt-stats span {
@@ -252,7 +256,7 @@
 }
 
 .qt-best.ok {
-  color: #d97706;
+  color: #7c3aed;
 }
 
 .qt-best.low {
@@ -314,7 +318,7 @@
 .quiz-tile.skeleton {
   height: 380px;
   border: none;
-  background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
+  background: linear-gradient(90deg, #f1eefe 25%, #faf9ff 50%, #f1eefe 75%);
   background-size: 200% 100%;
   animation: quizSkeleton 1.4s linear infinite;
 }
