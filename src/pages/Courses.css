@@ -1,144 +1,186 @@
-.page-header {
-  margin-bottom: 32px;
-}
-
-.page-header h1 {
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-}
-
-.page-header p {
-  color: var(--muted);
-}
-
 .courses-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
 }
 
 .course-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-top: 5px solid var(--course-color, var(--primary));
-  border-radius: var(--radius);
-  padding: 28px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  animation: cardIn 0.5s ease both;
+  overflow: hidden;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  animation: courseIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--i, 0) * 0.08s + 0.15s);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.course-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow);
-}
-
-.course-top {
+.course-banner {
+  position: relative;
+  overflow: hidden;
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  height: 120px;
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    var(--course-color),
+    color-mix(in srgb, var(--course-color) 60%, #0f172a)
+  );
 }
 
-.course-icon {
-  width: 56px;
-  height: 56px;
+.course-banner-circle {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  right: -40px;
+  bottom: -70px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: transform 0.5s ease;
+}
+
+.course-mark {
+  position: relative;
+  width: 58px;
+  height: 58px;
   border-radius: 16px;
   display: grid;
   place-items: center;
-  font-size: 1.8rem;
-  background: color-mix(in srgb, var(--course-color) 15%, white);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .course-level {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--course-color);
-  background: color-mix(in srgb, var(--course-color) 12%, white);
+  position: relative;
   padding: 4px 12px;
   border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.25);
 }
 
-.course-card h2 {
-  font-size: 1.3rem;
+.course-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 22px;
+}
+
+.course-body h2 {
+  font-size: 1.25rem;
   margin-bottom: 8px;
 }
 
-.course-card p {
-  color: var(--muted);
-  font-size: 0.95rem;
+.course-body p {
   flex: 1;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .course-footer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
   border-top: 1px solid var(--border);
-  padding-top: 18px;
 }
 
 .course-meta {
-  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.9rem;
   font-weight: 600;
+  color: var(--muted);
 }
 
 .course-link {
-  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
   font-weight: 700;
-  font-size: 0.95rem;
+  color: var(--course-color);
 }
 
-.course-link:hover {
-  text-decoration: underline;
+.course-link svg {
+  transition: transform 0.25s ease;
 }
 
-.skeleton {
-  height: 280px;
-  border-top-color: var(--border);
-  background: linear-gradient(90deg, var(--card) 25%, var(--bg) 50%, var(--card) 75%);
+@media (hover: hover) {
+  .course-card:hover {
+    transform: translateY(-8px);
+    border-color: color-mix(in srgb, var(--course-color) 40%, white);
+    box-shadow: 0 22px 44px color-mix(in srgb, var(--course-color) 25%, transparent);
+  }
+
+  .course-card:hover .course-mark {
+    transform: rotate(-10deg) scale(1.1);
+  }
+
+  .course-card:hover .course-banner-circle {
+    transform: scale(1.4);
+  }
+
+  .course-card:hover .course-link svg {
+    transform: translateX(5px);
+  }
+}
+
+.course-card:active {
+  transform: scale(0.98);
+}
+
+.course-card.skeleton {
+  height: 300px;
+  border: none;
+  background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: skeletonShine 1.4s linear infinite;
 }
 
-.skeleton:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.page-message {
-  background: var(--card);
-  border: 2px dashed var(--border);
-  border-radius: var(--radius);
-  padding: 48px;
-  text-align: center;
-  color: var(--muted);
-}
-
-.page-message.error {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: var(--danger);
-}
-
-@keyframes cardIn {
+@keyframes courseIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-@keyframes shimmer {
-  0% {
+@keyframes skeletonShine {
+  from {
     background-position: 200% 0;
   }
-  100% {
+  to {
     background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-card,
+  .course-card.skeleton {
+    animation: none;
   }
 }
