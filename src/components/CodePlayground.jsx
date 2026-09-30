@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CodePlayground.css";
 
-const SANDBOX = "allow-popups";
+const SANDBOX = "allow-scripts allow-popups";
 
 const workerSource = `
   function format(value) {
