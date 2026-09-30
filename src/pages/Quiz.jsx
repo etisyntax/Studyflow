@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { supabase } from "../lib/supabase";
+import { useAchievements } from "../context/AchievementContext";
 import {
   CheckIcon,
   XIcon,
@@ -32,6 +33,7 @@ function getMessage(percent) {
 
 function Quiz() {
   const { quizId } = useParams();
+  const { checkForNewBadges } = useAchievements();
   const [quiz, setQuiz] = useState(null);
   const [nextQuiz, setNextQuiz] = useState(null);
   const [previousBest, setPreviousBest] = useState(null);
@@ -165,6 +167,7 @@ function Quiz() {
     }
 
     setSaved({ score: data[0].final_score, total: data[0].final_total });
+    checkForNewBadges();
   }
 
   function nextQuestion() {

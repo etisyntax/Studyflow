@@ -3,10 +3,12 @@ import { Link, useParams } from "react-router";
 import Markdown from "react-markdown";
 import { supabase } from "../lib/supabase";
 import CodePlayground from "../components/CodePlayground";
+import { useAchievements } from "../context/AchievementContext";
 import "./Lesson.css";
 
 function Lesson() {
   const { courseId, lessonId } = useParams();
+  const { checkForNewBadges } = useAchievements();
   const [lesson, setLesson] = useState(null);
   const [allLessons, setAllLessons] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -64,6 +66,7 @@ function Lesson() {
     }
 
     setIsCompleted(true);
+    checkForNewBadges();
   }
 
   if (error) return <div className="page-message error">{error}</div>;

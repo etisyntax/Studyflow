@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
+import { AchievementProvider } from "../context/AchievementContext";
 import { HistoryIcon, UserIcon } from "./Icons";
 import "./AppLayout.css";
 
@@ -63,45 +64,47 @@ function AppLayout() {
   }
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <span className="sidebar-mark">S</span>
-          StudyFlow
-        </div>
+    <AchievementProvider>
+      <div className="app-layout">
+        <aside className="sidebar">
+          <div className="sidebar-logo">
+            <span className="sidebar-mark">S</span>
+            StudyFlow
+          </div>
 
-        <nav className="sidebar-nav">
-          {links.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={`sidebar-link ${link.mobileOnly ? "mobile-only" : ""}`}
-            >
-              {link.icon}
-              <span>{link.label}</span>
+          <nav className="sidebar-nav">
+            {links.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={`sidebar-link ${link.mobileOnly ? "mobile-only" : ""}`}
+              >
+                {link.icon}
+                <span>{link.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="sidebar-footer">
+            <NavLink to="/profile" className="sidebar-user" title="View your profile">
+              <div className="avatar">{initial}</div>
+              <div className="sidebar-user-info">
+                <strong>{name}</strong>
+                <span>View profile</span>
+              </div>
             </NavLink>
-          ))}
-        </nav>
+            <button className="sidebar-link logout-btn" onClick={handleLogout}>
+              <LogoutIcon />
+              <span>Log out</span>
+            </button>
+          </div>
+        </aside>
 
-        <div className="sidebar-footer">
-          <NavLink to="/profile" className="sidebar-user" title="View your profile">
-            <div className="avatar">{initial}</div>
-            <div className="sidebar-user-info">
-              <strong>{name}</strong>
-              <span>View profile</span>
-            </div>
-          </NavLink>
-          <button className="sidebar-link logout-btn" onClick={handleLogout}>
-            <LogoutIcon />
-            <span>Log out</span>
-          </button>
-        </div>
-      </aside>
-
-      <main className="app-content">
-        <Outlet />
-      </main>
-    </div>
+        <main className="app-content">
+          <Outlet />
+        </main>
+      </div>
+    </AchievementProvider>
   );
 }
 

@@ -1,0 +1,160 @@
+.toast-stack {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(360px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.badge-toast {
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+  animation: toastIn 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.badge-toast-icon {
+  position: relative;
+  overflow: hidden;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, #f59e0b, #ec4899);
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.35);
+  animation: medalSpin 0.8s ease 0.2s both;
+}
+
+.badge-toast-shine {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  transform: skewX(-20deg);
+  animation: shine 1.2s ease 0.8s both;
+}
+
+.badge-toast-text {
+  min-width: 0;
+  padding-right: 20px;
+}
+
+.badge-toast-text span {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #db2777;
+}
+
+.badge-toast-text strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.badge-toast-text p {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.badge-toast-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.badge-toast-close:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.badge-toast-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #ec4899);
+  transform-origin: left;
+  animation: toastTimer 5s linear both;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes medalSpin {
+  from {
+    transform: scale(0) rotate(-180deg);
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes shine {
+  from {
+    left: -60%;
+  }
+  to {
+    left: 130%;
+  }
+}
+
+@keyframes toastTimer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .toast-stack {
+    left: 16px;
+    right: 16px;
+    width: auto;
+    bottom: 90px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge-toast,
+  .badge-toast-icon,
+  .badge-toast-shine {
+    animation: none;
+  }
+}
