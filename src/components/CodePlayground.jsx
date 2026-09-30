@@ -3,6 +3,35 @@ import "./CodePlayground.css";
 
 const SANDBOX = "allow-scripts allow-popups";
 
+function buildReactPage(code) {
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>body { font-family: Arial, sans-serif; margin: 0; padding: 16px; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      window.onerror = function (message) {
+        var box = document.getElementById("root");
+        var text = String(message).replace(/</g, "&lt;");
+        box.innerHTML = '<pre style="color:#b91c1c;background:#fef2f2;padding:12px;border-radius:8px;white-space:pre-wrap;">' + text + '</pre>';
+      };
+    </script>
+    <script type="text/babel" data-presets="react">
+      const { useState, useEffect } = React;
+      ${code}
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>`;
+}
+
 const workerSource = `
   function format(value) {
     if (typeof value === "string") return value;
@@ -144,10 +173,16 @@ const workerSource = `
 `;
 
 function CodePlayground({ initialCode, mode = "javascript" }) {
-  const isHtml = mode === "html";
+  const isReact = mode === "react";
+  const isPreview = mode === "html" || isReact;
+
+  function toPreview(source) {
+    return isReact ? buildReactPage(source) : source;
+  }
+
   const [code, setCode] = useState(initialCode);
   const [output, setOutput] = useState([]);
-  const [preview, setPreview] = useState(isHtml ? initialCode : "");
+  const [preview, setPreview] = useState(isPreview ? toPreview(initialCode) : "");
   const [running, setRunning] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -244,8 +279,8 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
   }
 
   function runCode() {
-    if (isHtml) {
-      setPreview(code);
+    if (isPreview) {
+      setPreview(toPreview(code));
     } else {
       runScript();
     }
@@ -254,7 +289,7 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
   function resetCode() {
     setCode(initialCode);
     setOutput([]);
-    setPreview(isHtml ? initialCode : "");
+    setPreview(isPreview ? toPreview(initialCode) : "");
   }
 
   function handleKeyDown(event) {
@@ -280,8 +315,9 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
   }
 
   let title = "Code Playground";
-  if (isHtml) title = "HTML and CSS Playground";
+  if (mode === "html") title = "HTML and CSS Playground";
   if (mode === "typescript") title = "TypeScript Playground";
+  if (isReact) title = "React Playground";
 
   return (
     <div className={`playground ${expanded ? "expanded" : ""}`}>
@@ -315,7 +351,7 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
           rows={Math.max(code.split("\n").length + 1, 10)}
         />
 
-        {isHtml ? (
+        {isPreview ? (
           <div className="playground-preview">
             <div className="output-label">Preview</div>
             <iframe
@@ -325,7 +361,9 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
               sandbox={SANDBOX}
             ></iframe>
             <p className="output-hint preview-hint">
-              Edit the code, then click Run or press Ctrl and Enter to update the preview.
+              {isReact
+                ? "Edit your App component, then click Run or press Ctrl and Enter to update the preview."
+                : "Edit the code, then click Run or press Ctrl and Enter to update the preview."}
             </p>
           </div>
         ) : (
