@@ -136,3 +136,54 @@ export function TargetIcon(props) {
     </Svg>
   );
 }
+export function StarIcon(props) {
+  return (
+    <Svg {...props}>
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </Svg>
+  );
+}
+
+export function ZapIcon(props) {
+  return (
+    <Svg {...props}>
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </Svg>
+  );
+}
+
+export function AwardIcon(props) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="8" r="7" />
+      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+    </Svg>
+  );
+}
+
+export function LockIcon(props) {
+  return (
+    <Svg {...props}>
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </Svg>
+  );
+}
+
+export function UserIcon(props) {
+  return (
+    <Svg {...props}>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </Svg>
+  );
+}
+
+export function EditIcon(props) {
+  return (
+    <Svg {...props}>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+    </Svg>
+  );
+}

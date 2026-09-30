@@ -3,6 +3,15 @@ import { supabase } from "../lib/supabase";
 
 const AuthContext = createContext(null);
 
+async function fetchProfile(userId) {
+  const { data } = await supabase
+    .from("profiles")
+    .select("full_name, created_at")
+    .eq("id", userId)
+    .single();
+  return data;
+}
+
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -25,20 +34,21 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!session) return;
-
-    supabase
-      .from("profiles")
-      .select("full_name")
-      .eq("id", session.user.id)
-      .single()
-      .then(({ data }) => setProfile(data));
+    fetchProfile(session.user.id).then(setProfile);
   }, [session]);
+
+  async function refreshProfile() {
+    if (!session) return;
+    const data = await fetchProfile(session.user.id);
+    setProfile(data);
+  }
 
   const value = {
     session,
     user: session ? session.user : null,
     profile: session ? profile : null,
     loading,
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
