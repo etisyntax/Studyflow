@@ -86,4 +86,35 @@ export function ClockIcon(props) {
       <polyline points="12 6 12 12 16 14" />
     </Svg>
   );
+}export function HistoryIcon(props) {
+  return (
+    <Svg {...props}>
+      <path d="M3 3v5h5" />
+      <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" />
+      <path d="M12 7v5l4 2" />
+    </Svg>
+  );
+}
+
+export function ListIcon(props) {
+  return (
+    <Svg {...props}>
+      <line x1="8" y1="6" x2="21" y2="6" />
+      <line x1="8" y1="12" x2="21" y2="12" />
+      <line x1="8" y1="18" x2="21" y2="18" />
+      <line x1="3" y1="6" x2="3.01" y2="6" />
+      <line x1="3" y1="12" x2="3.01" y2="12" />
+      <line x1="3" y1="18" x2="3.01" y2="18" />
+    </Svg>
+  );
+}
+
+export function BarChartIcon(props) {
+  return (
+    <Svg {...props}>
+      <line x1="12" y1="20" x2="12" y2="10" />
+      <line x1="18" y1="20" x2="18" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="16" />
+    </Svg>
+  );
 }

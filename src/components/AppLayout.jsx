@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
+import { HistoryIcon } from "./Icons";
 import "./AppLayout.css";
 
 function HomeIcon() {
@@ -45,6 +46,7 @@ const links = [
   { to: "/dashboard", label: "Dashboard", icon: <HomeIcon /> },
   { to: "/courses", label: "Courses", icon: <BookIcon /> },
   { to: "/quizzes", label: "Quizzes", icon: <TargetIcon /> },
+  { to: "/history", label: "History", icon: <HistoryIcon /> },
 ];
 
 function AppLayout() {

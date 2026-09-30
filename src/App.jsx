@@ -8,6 +8,7 @@ import CourseDetail from "./pages/CourseDetail";
 import Lesson from "./pages/Lesson";
 import Quizzes from "./pages/Quizzes";
 import Quiz from "./pages/Quiz";
+import History from "./pages/History";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/courses/:courseId/lessons/:lessonId" element={<Lesson />} />
         <Route path="/quizzes" element={<Quizzes />} />
         <Route path="/quizzes/:quizId" element={<Quiz />} />
+        <Route path="/history" element={<History />} />
       </Route>
     </Routes>
   );
