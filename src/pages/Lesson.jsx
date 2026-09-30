@@ -97,7 +97,7 @@ function Lesson() {
         <CodePlayground
           key={lesson.id}
           initialCode={lesson.example_code}
-          mode={lesson.courses.playground}
+          mode={lesson.playground || lesson.courses.playground}
         />
       )}
 

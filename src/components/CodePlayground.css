@@ -91,7 +91,7 @@
   border-top: 1px solid #1e293b;
   background: #020617;
   padding: 16px 22px 20px;
-  min-height: 90px;
+  min-height: 160px;
 }
 
 .output-label {
@@ -167,7 +167,7 @@
 .preview-frame {
   display: block;
   width: 100%;
-  min-height: 300px;
+  min-height: 420px;
   border: none;
   border-radius: 12px;
   background: #fff;
@@ -175,4 +175,65 @@
 
 .preview-hint {
   margin-top: 12px;
+}
+.playground.expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  margin: 0;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  animation: expandIn 0.25s ease both;
+}
+
+.playground.expanded .playground-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.playground.expanded .playground-editor {
+  height: 100%;
+  resize: none;
+  overflow: auto;
+}
+
+.playground.expanded .playground-output,
+.playground.expanded .playground-preview {
+  border-top: none;
+  border-left: 1px solid #1e293b;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.playground.expanded .preview-frame {
+  flex: 1;
+  min-height: 0;
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 800px) {
+  .playground.expanded .playground-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .playground.expanded .playground-output,
+  .playground.expanded .playground-preview {
+    border-left: none;
+    border-top: 1px solid #1e293b;
+  }
 }

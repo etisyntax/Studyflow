@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import Lesson from "./pages/Lesson";
+import Quiz from "./pages/Quiz";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/:courseId" element={<CourseDetail />} />
         <Route path="/courses/:courseId/lessons/:lessonId" element={<Lesson />} />
+        <Route path="/courses/:courseId/quiz" element={<Quiz />} />
       </Route>
     </Routes>
   );

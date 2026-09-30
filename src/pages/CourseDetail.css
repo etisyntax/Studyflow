@@ -170,3 +170,31 @@
     align-self: stretch;
   }
 }
+.quiz-cta {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--course-color) 12%, white);
+  border: 2px solid color-mix(in srgb, var(--course-color) 35%, white);
+}
+
+.quiz-cta h3 {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.quiz-cta p {
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .quiz-cta {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+}

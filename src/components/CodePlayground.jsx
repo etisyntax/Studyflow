@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./CodePlayground.css";
+
+const SANDBOX = "allow-popups";
 
 const workerSource = `
   function format(value) {
@@ -38,6 +40,23 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
   const [output, setOutput] = useState([]);
   const [preview, setPreview] = useState(isHtml ? initialCode : "");
   const [running, setRunning] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!expanded) return;
+
+    function handleEscape(event) {
+      if (event.key === "Escape") setExpanded(false);
+    }
+
+    document.addEventListener("keydown", handleEscape);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [expanded]);
 
   function runJavaScript() {
     setRunning(true);
@@ -128,7 +147,7 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
   }
 
   return (
-    <div className="playground">
+    <div className={`playground ${expanded ? "expanded" : ""}`}>
       <div className="playground-header">
         <div className="code-dots">
           <span></span>
@@ -142,50 +161,55 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
           <button className="pg-btn pg-reset" onClick={resetCode}>
             Reset
           </button>
+          <button className="pg-btn pg-reset" onClick={() => setExpanded(!expanded)}>
+            {expanded ? "✕ Close" : "⛶ Expand"}
+          </button>
           <button className="pg-btn pg-run" onClick={runCode} disabled={running}>
             {running ? "Running..." : "▶ Run"}
           </button>
         </div>
       </div>
 
-      <textarea
-        className="playground-editor"
-        value={code}
-        onChange={(event) => setCode(event.target.value)}
-        onKeyDown={handleKeyDown}
-        spellCheck={false}
-        rows={code.split("\n").length + 1}
-      />
+      <div className="playground-body">
+        <textarea
+          className="playground-editor"
+          value={code}
+          onChange={(event) => setCode(event.target.value)}
+          onKeyDown={handleKeyDown}
+          spellCheck={false}
+          rows={Math.max(code.split("\n").length + 1, 10)}
+        />
 
-      {isHtml ? (
-        <div className="playground-preview">
-          <div className="output-label">Preview</div>
-          <iframe
-            className="preview-frame"
-            title="Code preview"
-            srcDoc={preview}
-            sandbox="allow-popups"
-          ></iframe>
-          <p className="output-hint preview-hint">
-            Edit the code, then click Run or press Ctrl and Enter to update the preview.
-          </p>
-        </div>
-      ) : (
-        <div className="playground-output">
-          <div className="output-label">Output</div>
-          {output.length === 0 ? (
-            <p className="output-hint">
-              Click Run, or press Ctrl and Enter, to see the result here.
+        {isHtml ? (
+          <div className="playground-preview">
+            <div className="output-label">Preview</div>
+            <iframe
+              className="preview-frame"
+              title="Code preview"
+              srcDoc={preview}
+              sandbox={SANDBOX}
+            ></iframe>
+            <p className="output-hint preview-hint">
+              Edit the code, then click Run or press Ctrl and Enter to update the preview.
             </p>
-          ) : (
-            output.map((line, index) => (
-              <pre key={index} className={`output-line ${line.type}`}>
-                {line.text}
-              </pre>
-            ))
-          )}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="playground-output">
+            <div className="output-label">Output</div>
+            {output.length === 0 ? (
+              <p className="output-hint">
+                Click Run, or press Ctrl and Enter, to see the result here.
+              </p>
+            ) : (
+              output.map((line, index) => (
+                <pre key={index} className={`output-line ${line.type}`}>
+                  {line.text}
+                </pre>
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
