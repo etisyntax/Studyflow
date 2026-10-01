@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import PasswordInput from "../components/PasswordInput";
+import AuthLayout from "../components/AuthLayout";
 import "./Auth.css";
 
 function Login() {
@@ -9,6 +10,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const navigate = useNavigate();
 
   async function handleSubmit(event) {
@@ -17,7 +19,7 @@ function Login() {
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: email.trim(),
       password,
     });
 
@@ -25,6 +27,7 @@ function Login() {
 
     if (error) {
       setError("Incorrect email or password. Please try again.");
+      setAttempt((previous) => previous + 1);
       return;
     }
 
@@ -32,52 +35,55 @@ function Login() {
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <Link to="/" className="auth-logo">
-          <span className="auth-mark">S</span>
-          StudyFlow
-        </Link>
+    <AuthLayout>
+      <h1 className="auth-in" style={{ "--d": "0.1s" }}>
+        Welcome back
+      </h1>
+      <p className="auth-subtitle auth-in" style={{ "--d": "0.15s" }}>
+        Log in to continue learning.
+      </p>
 
-        <h1>Welcome back</h1>
-        <p className="auth-subtitle">Log in to continue learning.</p>
+      {error && (
+        <div key={attempt} className="auth-error" role="alert">
+          {error}
+        </div>
+      )}
 
-        {error && <div className="auth-error">{error}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="form-group auth-in" style={{ "--d": "0.2s" }}>
+          <label htmlFor="login-email">Email</label>
+          <input
+            id="login-email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+        <div className="form-group auth-in" style={{ "--d": "0.25s" }}>
+          <label>Password</label>
+          <PasswordInput
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Your password"
+          />
+        </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <PasswordInput
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your password"
-            />
-          </div>
-
+        <div className="auth-in" style={{ "--d": "0.3s" }}>
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
-            {loading ? "Logging in..." : "Log In"}
+            {loading && <span className="auth-spinner"></span>}
+            {loading ? "Logging in..." : "Log in"}
           </button>
-        </form>
+        </div>
+      </form>
 
-        <p className="auth-switch">
-          New to StudyFlow? <Link to="/register">Create an account</Link>
-        </p>
-        <Link to="/" className="auth-back">
-          ← Back to home
-        </Link>
-      </div>
-    </div>
+      <p className="auth-switch auth-in" style={{ "--d": "0.35s" }}>
+        New to StudyFlow? <Link to="/register">Create an account</Link>
+      </p>
+    </AuthLayout>
   );
 }
 

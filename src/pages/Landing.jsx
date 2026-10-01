@@ -20,11 +20,11 @@ import "./Landing.css";
 
 const features = [
   { icon: BookOpenIcon, color: "#4f46e5", title: "Structured Lessons", text: "Short, clear lessons that build on each other, one step at a time." },
-  { icon: CodeIcon, color: "#0891b2", title: "Live Code Playground", text: "Edit the example code and run it instantly, right inside every lesson." },
-  { icon: TargetIcon, color: "#db2777", title: "Quizzes at Your Level", text: "Easy, Medium and Hard quizzes, with instant feedback on every answer." },
-  { icon: BarChartIcon, color: "#d97706", title: "Progress Tracking", text: "Watch your lessons, scores and course progress grow on your dashboard." },
-  { icon: AwardIcon, color: "#7c3aed", title: "Badges to Earn", text: `Unlock ${achievements.length} achievements as you learn, and celebrate every milestone.` },
-  { icon: LockIcon, color: "#059669", title: "Verified Scores", text: "Answers are marked on the server, so every score is real and earned." },
+  { icon: CodeIcon, color: "#6d28d9", title: "Live Code Playground", text: "Edit the example code and run it instantly, right inside every lesson." },
+  { icon: TargetIcon, color: "#7c3aed", title: "Quizzes at Your Level", text: "Easy, Medium and Hard quizzes, with instant feedback on every answer." },
+  { icon: BarChartIcon, color: "#4338ca", title: "Progress Tracking", text: "Watch your lessons, scores and course progress grow on your dashboard." },
+  { icon: AwardIcon, color: "#9333ea", title: "Badges to Earn", text: `Unlock ${achievements.length} achievements as you learn, and celebrate every milestone.` },
+  { icon: LockIcon, color: "#5b21b6", title: "Verified Scores", text: "Answers are marked on the server, so every score is real and earned." },
 ];
 
 const steps = [
@@ -35,12 +35,12 @@ const steps = [
 
 const shapes = [
   { type: "circle", x: "6%", y: "20%", size: 18, color: "#6366f1", dur: 9 },
-  { type: "square", x: "44%", y: "10%", size: 14, color: "#ec4899", dur: 11 },
+  { type: "square", x: "44%", y: "10%", size: 14, color: "#a855f7", dur: 11 },
   { type: "ring", x: "92%", y: "72%", size: 34, color: "#8b5cf6", dur: 13 },
-  { type: "circle", x: "52%", y: "88%", size: 12, color: "#06b6d4", dur: 8 },
-  { type: "square", x: "3%", y: "80%", size: 20, color: "#f59e0b", dur: 12 },
-  { type: "ring", x: "40%", y: "62%", size: 24, color: "#ec4899", dur: 10 },
-  { type: "circle", x: "96%", y: "18%", size: 10, color: "#10b981", dur: 7 },
+  { type: "circle", x: "52%", y: "88%", size: 12, color: "#c4b5fd", dur: 8 },
+  { type: "square", x: "3%", y: "80%", size: 20, color: "#7c3aed", dur: 12 },
+  { type: "ring", x: "40%", y: "62%", size: 24, color: "#a78bfa", dur: 10 },
+  { type: "circle", x: "96%", y: "18%", size: 10, color: "#4f46e5", dur: 7 },
 ];
 
 const cardMotions = ["left", "drop", "right"];
