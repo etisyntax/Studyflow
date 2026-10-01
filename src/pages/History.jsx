@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
-import { ListIcon, BarChartIcon, TrophyIcon, CheckIcon } from "../components/Icons";
+import PageHeader from "../components/PageHeader";
+import CountUp from "../components/CountUp";
+import {
+  ListIcon,
+  BarChartIcon,
+  TrophyIcon,
+  CheckIcon,
+  HistoryIcon,
+  ArrowRightIcon,
+} from "../components/Icons";
 import "./History.css";
 
 const levelLabels = { easy: "Easy", medium: "Medium", hard: "Hard" };
@@ -59,9 +68,6 @@ function History() {
     loadHistory();
   }, []);
 
-  if (loading) return <div className="page-message">Loading your history...</div>;
-  if (error) return <div className="page-message error">{error}</div>;
-
   const totalAttempts = attempts.length;
   const average =
     totalAttempts > 0
@@ -90,137 +96,180 @@ function History() {
       return new Date(b.taken_at) - new Date(a.taken_at);
     });
 
+  const summary = [
+    { icon: ListIcon, color: "#4f46e5", value: totalAttempts, label: "Total attempts" },
+    { icon: BarChartIcon, color: "#6d28d9", value: average, suffix: "%", label: "Average score" },
+    { icon: TrophyIcon, color: "#7c3aed", value: best, suffix: "%", label: "Best score" },
+    { icon: CheckIcon, color: "#9333ea", value: passedQuizzes, label: "Quizzes passed" },
+  ];
+
+  let content;
+
+  if (loading) {
+    content = <div className="page-message">Loading your history...</div>;
+  } else if (error) {
+    content = <div className="page-message error">{error}</div>;
+  } else {
+    content = (
+      <>
+        <div className="history-summary">
+          {summary.map((card, index) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.label}
+                className="summary-card"
+                style={{ "--accent": card.color, "--i": index }}
+              >
+                <span className="summary-icon">
+                  <Icon />
+                </span>
+                <div>
+                  <strong>
+                    <CountUp end={card.value} />
+                    {card.suffix}
+                  </strong>
+                  <span>{card.label}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {totalAttempts === 0 ? (
+          <div className="history-empty">
+            <span className="history-empty-icon">
+              <HistoryIcon size={30} />
+            </span>
+            <h2>No quizzes taken yet</h2>
+            <p>Your attempts will appear here as soon as you finish your first quiz.</p>
+            <Link to="/quizzes" className="btn btn-primary">
+              Browse quizzes
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="history-toolbar">
+              <select value={topic} onChange={(e) => setTopic(e.target.value)}>
+                <option value="all">All topics</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={String(course.id)}>
+                    {course.title}
+                  </option>
+                ))}
+              </select>
+
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="highest">Highest score</option>
+                <option value="lowest">Lowest score</option>
+              </select>
+
+              <span className="history-count">
+                Showing {visibleAttempts.length} of {totalAttempts} attempts
+              </span>
+            </div>
+
+            <div className="history-table-wrap">
+              <table className="history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Quiz</th>
+                    <th>Level</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Result</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleAttempts.map((item, index) => (
+                    <tr
+                      key={item.id}
+                      style={{
+                        "--course-color": item.quizzes.courses.color,
+                        "--i": Math.min(index, 15),
+                      }}
+                    >
+                      <td className="h-date">{formatDate(item.taken_at)}</td>
+                      <td>
+                        <div className="h-quiz-cell">
+                          <span className="h-mark">
+                            {item.quizzes.courses.title.charAt(0)}
+                          </span>
+                          <div>
+                            <strong className="h-quiz">{item.quizzes.title}</strong>
+                            <span className="h-course">{item.quizzes.courses.title}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`h-level ${item.quizzes.difficulty}`}>
+                          {levelLabels[item.quizzes.difficulty]}
+                        </span>
+                      </td>
+                      <td className="h-score">
+                        {item.score} / {item.total}
+                      </td>
+                      <td>
+                        <div className="h-percent">
+                          <div className="h-bar">
+                            <div
+                              className={`h-fill ${barClass(item.percent)}`}
+                              style={{ width: `${item.percent}%` }}
+                            ></div>
+                          </div>
+                          <span>{item.percent}%</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`h-result ${item.percent >= 70 ? "pass" : "fail"}`}>
+                          {item.percent >= 70 ? "Passed" : "Not passed"}
+                        </span>
+                      </td>
+                      <td>
+                        <Link to={`/quizzes/${item.quiz_id}`} className="h-retake">
+                          Retake <ArrowRightIcon size={14} />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </>
+    );
+  }
+
   return (
     <div>
-      <div className="page-header">
-        <h1>Quiz history</h1>
-        <p>Every quiz you have taken, so you can see how far you have come.</p>
-      </div>
+      <PageHeader
+        icon={HistoryIcon}
+        theme="teal"
+        title="Quiz history"
+        subtitle="Every quiz you have taken, so you can see how far you have come."
+      >
+        {!loading && !error && totalAttempts > 0 && (
+          <>
+            <div className="ph-stat">
+              <strong><CountUp end={totalAttempts} /></strong>
+              <span>Attempts</span>
+            </div>
+            <div className="ph-stat">
+              <strong>
+                <CountUp end={best} />%
+              </strong>
+              <span>Best</span>
+            </div>
+          </>
+        )}
+      </PageHeader>
 
-      <div className="history-summary">
-        <div className="summary-card">
-          <span className="summary-icon">
-            <ListIcon />
-          </span>
-          <div>
-            <strong>{totalAttempts}</strong>
-            <span>Total attempts</span>
-          </div>
-        </div>
-        <div className="summary-card">
-          <span className="summary-icon">
-            <BarChartIcon />
-          </span>
-          <div>
-            <strong>{average}%</strong>
-            <span>Average score</span>
-          </div>
-        </div>
-        <div className="summary-card">
-          <span className="summary-icon">
-            <TrophyIcon />
-          </span>
-          <div>
-            <strong>{best}%</strong>
-            <span>Best score</span>
-          </div>
-        </div>
-        <div className="summary-card">
-          <span className="summary-icon">
-            <CheckIcon />
-          </span>
-          <div>
-            <strong>{passedQuizzes}</strong>
-            <span>Quizzes passed</span>
-          </div>
-        </div>
-      </div>
-
-      {totalAttempts === 0 ? (
-        <div className="history-empty">
-          <h2>No quizzes taken yet</h2>
-          <p>Your attempts will appear here as soon as you finish your first quiz.</p>
-          <Link to="/quizzes" className="btn btn-primary">
-            Browse quizzes
-          </Link>
-        </div>
-      ) : (
-        <>
-          <div className="history-toolbar">
-            <select value={topic} onChange={(e) => setTopic(e.target.value)}>
-              <option value="all">All topics</option>
-              {courses.map((course) => (
-                <option key={course.id} value={String(course.id)}>
-                  {course.title}
-                </option>
-              ))}
-            </select>
-
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="highest">Highest score</option>
-              <option value="lowest">Lowest score</option>
-            </select>
-          </div>
-
-          <div className="history-table-wrap">
-            <table className="history-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Quiz</th>
-                  <th>Level</th>
-                  <th>Score</th>
-                  <th>Percentage</th>
-                  <th>Result</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {visibleAttempts.map((item) => (
-                  <tr key={item.id} style={{ "--course-color": item.quizzes.courses.color }}>
-                    <td className="h-date">{formatDate(item.taken_at)}</td>
-                    <td>
-                      <strong className="h-quiz">{item.quizzes.title}</strong>
-                      <span className="h-course">{item.quizzes.courses.title}</span>
-                    </td>
-                    <td>
-                      <span className={`qt-badge ${item.quizzes.difficulty}`}>
-                        {levelLabels[item.quizzes.difficulty]}
-                      </span>
-                    </td>
-                    <td className="h-score">
-                      {item.score} / {item.total}
-                    </td>
-                    <td>
-                      <div className="h-percent">
-                        <div className="h-bar">
-                          <div
-                            className={`h-fill ${barClass(item.percent)}`}
-                            style={{ width: `${item.percent}%` }}
-                          ></div>
-                        </div>
-                        <span>{item.percent}%</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span className={`h-result ${item.percent >= 70 ? "pass" : "fail"}`}>
-                        {item.percent >= 70 ? "Passed" : "Not passed"}
-                      </span>
-                    </td>
-                    <td>
-                      <Link to={`/quizzes/${item.quiz_id}`} className="h-retake">
-                        Retake
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
+      {content}
     </div>
   );
 }
