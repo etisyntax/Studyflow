@@ -3,7 +3,14 @@ import { Link, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import PasswordInput from "../components/PasswordInput";
 import AuthLayout from "../components/AuthLayout";
+import { LayersIcon, CodeIcon, BarChartIcon } from "../components/Icons";
 import "./Auth.css";
+
+const registerPoints = [
+  { icon: LayersIcon, text: "A growing library of courses for every level" },
+  { icon: CodeIcon, text: "Practise every lesson in a live code editor" },
+  { icon: BarChartIcon, text: "Track your progress and earn badges" },
+];
 
 const strengthLabels = ["Too short", "Weak", "Fair", "Good", "Strong"];
 
@@ -87,7 +94,11 @@ function Register() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      heading="Start your coding journey today."
+      text="Learn web development step by step, at your own pace, completely free."
+      points={registerPoints}
+    >
       <h1 className="auth-in" style={{ "--d": "0.1s" }}>
         Create your account
       </h1>

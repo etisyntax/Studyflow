@@ -3,7 +3,14 @@ import { Link, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import PasswordInput from "../components/PasswordInput";
 import AuthLayout from "../components/AuthLayout";
+import { BookOpenIcon, RefreshIcon, AwardIcon } from "../components/Icons";
 import "./Auth.css";
+
+const loginPoints = [
+  { icon: BookOpenIcon, text: "Continue from your last lesson" },
+  { icon: RefreshIcon, text: "Retake quizzes and beat your best score" },
+  { icon: AwardIcon, text: "Unlock your next badge" },
+];
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -35,7 +42,11 @@ function Login() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout
+      heading="Welcome back. Your progress is waiting."
+      text="Pick up right where you stopped, with your lessons, scores and badges saved."
+      points={loginPoints}
+    >
       <h1 className="auth-in" style={{ "--d": "0.1s" }}>
         Welcome back
       </h1>
