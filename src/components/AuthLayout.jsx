@@ -1,13 +1,7 @@
 import { Link } from "react-router";
-import { BookOpenIcon, TargetIcon, AwardIcon, TrophyIcon, ArrowRightIcon } from "./Icons";
+import { TrophyIcon, ArrowRightIcon } from "./Icons";
 
-const reasons = [
-  { icon: BookOpenIcon, text: "Short lessons from your first HTML tag to React apps" },
-  { icon: TargetIcon, text: "Quizzes with instant feedback on every answer" },
-  { icon: AwardIcon, text: "Badges and progress tracking as you learn" },
-];
-
-function AuthLayout({ children }) {
+function AuthLayout({ heading, text, points = [], children }) {
   return (
     <div className="auth-page">
       <aside className="auth-panel">
@@ -23,22 +17,18 @@ function AuthLayout({ children }) {
         </Link>
 
         <div className="ap-body">
-          <h2>
-            Learn. Practice.
-            <br />
-            Understand.
-          </h2>
-          <p>Everything you need to learn web development, in one place.</p>
+          <h2>{heading}</h2>
+          <p>{text}</p>
 
           <ul className="ap-reasons">
-            {reasons.map((reason, index) => {
-              const Icon = reason.icon;
+            {points.map((point, index) => {
+              const Icon = point.icon;
               return (
-                <li key={reason.text} style={{ "--d": `${0.4 + index * 0.12}s` }}>
+                <li key={point.text} style={{ "--d": `${0.4 + index * 0.12}s` }}>
                   <span className="ap-reason-icon">
                     <Icon size={18} />
                   </span>
-                  {reason.text}
+                  {point.text}
                 </li>
               );
             })}
@@ -57,9 +47,19 @@ function AuthLayout({ children }) {
       </aside>
 
       <main className="auth-main">
+        <span className="am-glow one"></span>
+        <span className="am-glow two"></span>
+        <span className="am-shape square"></span>
+        <span className="am-shape ring"></span>
+        <span className="am-shape dot"></span>
+
         <div className="auth-card">{children}</div>
+
         <Link to="/" className="auth-back">
-          <ArrowRightIcon size={14} className="auth-back-icon" /> Back to home
+          <span className="auth-back-icon">
+            <ArrowRightIcon size={14} />
+          </span>
+          Back to home
         </Link>
       </main>
     </div>
