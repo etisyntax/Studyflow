@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { AchievementProvider } from "../context/AchievementContext";
+import Logo from "./Logo";
 import {
   HomeIcon,
   CoursesIcon,
@@ -38,8 +39,7 @@ function AppLayout() {
       <div className="app-layout">
         <aside className="sidebar">
           <div className="sidebar-logo">
-            <span className="sidebar-mark">S</span>
-            StudyFlow
+            <Logo />
           </div>
 
           <nav className="sidebar-nav">

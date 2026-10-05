@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import Logo from "./Logo";
 import { TrophyIcon, ArrowRightIcon } from "./Icons";
 
 function AuthLayout({ heading, text, points = [], children }) {
@@ -12,8 +13,7 @@ function AuthLayout({ heading, text, points = [], children }) {
         <span className="ap-shape dot"></span>
 
         <Link to="/" className="ap-logo">
-          <span className="ap-mark">S</span>
-          StudyFlow
+          <Logo onDark size={38} />
         </Link>
 
         <div className="ap-body">
