@@ -17,7 +17,7 @@
 
 .reading-progress div {
   height: 100%;
-  background: linear-gradient(90deg, #4f46e5, #a855f7);
+  background: var(--primary);
   transform: scaleX(0);
   transform-origin: left;
 }
@@ -38,7 +38,7 @@
   transition: transform 0.2s ease;
 }
 
-/* Hero banner in the course colour */
+/* Hero in the course colour */
 
 .lesson-hero {
   position: relative;
@@ -47,12 +47,10 @@
   margin-bottom: 24px;
   border-radius: 24px;
   color: #fff;
-  background: linear-gradient(
-    120deg,
-    var(--course-color),
-    color-mix(in srgb, var(--course-color) 55%, #1e1b4b)
-  );
-  box-shadow: 0 20px 40px color-mix(in srgb, var(--course-color) 28%, transparent);
+  background-color: var(--course-color);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+  box-shadow: 0 16px 32px rgba(15, 42, 122, 0.16);
   animation: lessonRise 0.5s ease both;
 }
 
@@ -63,7 +61,7 @@
 .lh-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.22);
   animation: lessonFloat 8s ease-in-out infinite;
 }
 
@@ -79,6 +77,7 @@
   height: 100px;
   bottom: -50px;
   right: 30%;
+  border-color: rgba(255, 210, 63, 0.5);
   animation-delay: -4s;
 }
 
@@ -97,13 +96,14 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  background: rgba(15, 23, 42, 0.25);
+  color: var(--text);
+  background: #ffd23f;
 }
 
 .lh-count {
   font-size: 0.85rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .lesson-hero h1 {
@@ -175,7 +175,7 @@
   bottom: 0.2em;
   width: 4px;
   border-radius: 4px;
-  background: linear-gradient(180deg, var(--primary), #a855f7);
+  background: var(--primary);
 }
 
 .lesson-content h2:first-child {
@@ -198,7 +198,7 @@
 }
 
 .lesson-content li::marker {
-  color: #7c3aed;
+  color: var(--primary);
   font-weight: 700;
 }
 
@@ -211,8 +211,8 @@
   border-radius: 6px;
   font-family: Consolas, "Courier New", monospace;
   font-size: 0.9em;
-  color: #5b21b6;
-  background: #f3e8ff;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
 }
 
 /* Code playground window dots */
@@ -253,12 +253,6 @@
 .complete-btn {
   min-width: 280px;
   gap: 8px;
-  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.3);
-  transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
-}
-
-.complete-btn:active {
-  transform: scale(0.97);
 }
 
 .completed-badge {
@@ -268,9 +262,9 @@
   padding: 12px 26px 12px 12px;
   border-radius: 14px;
   font-weight: 700;
-  color: #5b21b6;
-  background: #f5f3ff;
-  border: 2px solid #ddd6fe;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  border: 2px solid #cddcff;
   animation: pop 0.45s ease;
 }
 
@@ -281,8 +275,8 @@
   display: grid;
   place-items: center;
   color: #fff;
-  background: linear-gradient(135deg, #6d28d9, #a855f7);
-  box-shadow: 0 6px 14px rgba(124, 58, 237, 0.35);
+  background: var(--primary);
+  box-shadow: 0 3px 0 var(--primary-deep);
 }
 
 .save-error {
@@ -342,15 +336,10 @@
     transform: rotate(180deg) translateX(4px);
   }
 
-  .complete-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px rgba(79, 70, 229, 0.4);
-  }
-
   .nav-card:hover {
     transform: translateY(-3px);
-    border-color: #c4b5fd;
-    box-shadow: 0 12px 26px rgba(79, 70, 229, 0.12);
+    border-color: #bfd3ff;
+    box-shadow: 0 10px 22px rgba(15, 42, 122, 0.08);
   }
 
   .nav-card.next:hover .nav-label svg {
