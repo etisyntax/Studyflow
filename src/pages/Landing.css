@@ -110,7 +110,7 @@
 
 .lp-shape.square {
   border-radius: 4px;
-  background: var(--accent);
+  background: #ffd23f;
   opacity: 0.85;
 }
 
@@ -382,7 +382,7 @@
   display: grid;
   place-items: center;
   color: var(--text);
-  background: var(--accent);
+  background: #ffd23f;
   animation: lpWiggle 2.5s ease-in-out 2s infinite;
 }
 
@@ -517,7 +517,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--accent);
+  background: #ffd23f;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.5s ease;
