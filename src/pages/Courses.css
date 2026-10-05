@@ -13,7 +13,7 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 22px;
-  animation: courseIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: courseIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
   animation-delay: calc(var(--i, 0) * 0.08s + 0.15s);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -26,11 +26,9 @@
   justify-content: space-between;
   height: 120px;
   padding: 20px;
-  background: linear-gradient(
-    135deg,
-    var(--course-color),
-    color-mix(in srgb, var(--course-color) 60%, #0f172a)
-  );
+  background-color: var(--course-color);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
 }
 
 .course-banner-circle {
@@ -40,7 +38,7 @@
   right: -40px;
   bottom: -70px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.28);
   transition: transform 0.5s ease;
 }
 
@@ -53,10 +51,9 @@
   place-items: center;
   font-size: 1.6rem;
   font-weight: 800;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(6px);
+  color: var(--course-color);
+  background: #fff;
+  box-shadow: 0 4px 0 rgba(15, 23, 42, 0.18);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -68,8 +65,8 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #fff;
-  background: rgba(15, 23, 42, 0.25);
+  color: var(--text);
+  background: #ffd23f;
 }
 
 .course-body {
@@ -130,8 +127,8 @@
 @media (hover: hover) {
   .course-card:hover {
     transform: translateY(-8px);
-    border-color: color-mix(in srgb, var(--course-color) 40%, white);
-    box-shadow: 0 22px 44px color-mix(in srgb, var(--course-color) 25%, transparent);
+    border-color: color-mix(in srgb, var(--course-color) 35%, white);
+    box-shadow: 0 18px 36px rgba(15, 42, 122, 0.12);
   }
 
   .course-card:hover .course-mark {
@@ -154,7 +151,7 @@
 .course-card.skeleton {
   height: 300px;
   border: none;
-  background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
+  background: linear-gradient(90deg, #eef2fb 25%, #f7f9ff 50%, #eef2fb 75%);
   background-size: 200% 100%;
   animation: skeletonShine 1.4s linear infinite;
 }

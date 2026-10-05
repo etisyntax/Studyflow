@@ -95,11 +95,9 @@
   justify-content: space-between;
   height: 110px;
   padding: 18px 20px;
-  background: linear-gradient(
-    135deg,
-    var(--course-color),
-    color-mix(in srgb, var(--course-color) 60%, #0f172a)
-  );
+  background-color: var(--course-color);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
 }
 
 .qt-banner-circle {
@@ -109,7 +107,7 @@
   right: -40px;
   bottom: -70px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.28);
   transition: transform 0.5s ease;
 }
 
@@ -122,9 +120,9 @@
   place-items: center;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.24);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: var(--course-color);
+  background: #fff;
+  box-shadow: 0 4px 0 rgba(15, 23, 42, 0.18);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -149,21 +147,19 @@
   text-transform: uppercase;
 }
 
-.qt-badge {
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-}
-
 .qt-badge.easy {
-  background: #a78bfa;
+  color: var(--primary);
+  background: #fff;
 }
 
 .qt-badge.medium {
-  background: #7c3aed;
+  color: var(--text);
+  background: #ffd23f;
 }
 
 .qt-badge.hard {
-  background: #3b0764;
+  color: #fff;
+  background: #0f172a;
 }
 
 .qt-passed {
@@ -236,7 +232,7 @@
 .qt-stats div {
   padding: 10px 12px;
   border-radius: 12px;
-  background: #f8f7ff;
+  background: var(--paper);
 }
 
 .qt-stats span {
@@ -255,7 +251,7 @@
 }
 
 .qt-best.ok {
-  color: #7c3aed;
+  color: var(--primary);
 }
 
 .qt-best.low {
@@ -275,13 +271,14 @@
   font-weight: 700;
   color: #fff;
   background: var(--course-color);
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--course-color) 30%, transparent);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--course-color) 60%, #0f172a);
   cursor: pointer;
-  transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
 }
 
 .qt-button:active {
-  transform: scale(0.97);
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--course-color) 60%, #0f172a);
 }
 
 .qt-soon {
@@ -294,8 +291,8 @@
 @media (hover: hover) {
   .quiz-tile:hover {
     transform: translateY(-8px);
-    border-color: color-mix(in srgb, var(--course-color) 40%, white);
-    box-shadow: 0 22px 44px color-mix(in srgb, var(--course-color) 25%, transparent);
+    border-color: color-mix(in srgb, var(--course-color) 35%, white);
+    box-shadow: 0 18px 36px rgba(15, 42, 122, 0.12);
   }
 
   .quiz-tile:hover .qt-mark {
@@ -307,8 +304,8 @@
   }
 
   .qt-button:not(.qt-soon):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px color-mix(in srgb, var(--course-color) 40%, transparent);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--course-color) 60%, #0f172a);
   }
 }
 
@@ -317,7 +314,7 @@
 .quiz-tile.skeleton {
   height: 380px;
   border: none;
-  background: linear-gradient(90deg, #f1eefe 25%, #faf9ff 50%, #f1eefe 75%);
+  background: linear-gradient(90deg, #eef2fb 25%, #f7f9ff 50%, #eef2fb 75%);
   background-size: 200% 100%;
   animation: quizSkeleton 1.4s linear infinite;
 }
