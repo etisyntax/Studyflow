@@ -47,6 +47,8 @@ a {
   border-radius: 6px;
 }
 
+/* Buttons */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -120,4 +122,40 @@ a {
 .btn-large {
   padding: 14px 28px;
   font-size: 1rem;
+}
+
+/* Shared page messages: loading, empty and error states */
+
+.page-message {
+  padding: 48px 24px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--card);
+  border: 2px dashed #cddcff;
+  border-radius: 20px;
+  animation: messageIn 0.4s ease both;
+}
+
+.page-message.error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-message {
+    animation: none;
+  }
 }

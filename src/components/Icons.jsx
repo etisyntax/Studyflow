@@ -4,6 +4,7 @@ import {
   Trophy,
   ArrowRight,
   ArrowClockwise,
+  ArrowCounterClockwise,
   BookOpen,
   MagnifyingGlass,
   Clock,
@@ -22,6 +23,11 @@ import {
   House,
   Books,
   SignOut,
+  Play,
+  CornersOut,
+  Eye,
+  EyeSlash,
+  Compass,
 } from "@phosphor-icons/react";
 
 function makeIcon(PhosphorIcon, defaultWeight = "duotone") {
@@ -35,6 +41,11 @@ export const CheckIcon = makeIcon(Check, "bold");
 export const XIcon = makeIcon(X, "bold");
 export const ArrowRightIcon = makeIcon(ArrowRight, "bold");
 export const LockIcon = makeIcon(Lock, "bold");
+export const PlayIcon = makeIcon(Play, "fill");
+export const ExpandIcon = makeIcon(CornersOut, "bold");
+export const ResetIcon = makeIcon(ArrowCounterClockwise, "bold");
+export const EyeIcon = makeIcon(Eye, "bold");
+export const EyeOffIcon = makeIcon(EyeSlash, "bold");
 
 export const TrophyIcon = makeIcon(Trophy);
 export const RefreshIcon = makeIcon(ArrowClockwise);
@@ -55,3 +66,4 @@ export const CodeIcon = makeIcon(Code);
 export const HomeIcon = makeIcon(House);
 export const CoursesIcon = makeIcon(Books);
 export const LogoutIcon = makeIcon(SignOut);
+export const CompassIcon = makeIcon(Compass);

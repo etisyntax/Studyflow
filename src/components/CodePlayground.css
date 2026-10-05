@@ -1,9 +1,9 @@
 .playground {
   margin-top: 28px;
-  background: #0f172a;
-  border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  background: #0f172a;
+  border-radius: 20px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.18);
 }
 
 .playground-header {
@@ -16,9 +16,9 @@
 
 .playground-title {
   flex: 1;
-  color: #94a3b8;
   font-size: 0.85rem;
   font-weight: 600;
+  color: #94a3b8;
 }
 
 .playground-actions {
@@ -27,19 +27,23 @@
 }
 
 .pg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 8px;
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
 .pg-reset {
-  background: transparent;
   color: #94a3b8;
+  background: transparent;
   border: 1px solid #334155;
 }
 
@@ -49,37 +53,45 @@
 }
 
 .pg-run {
-  background: var(--success);
   color: #fff;
+  background: var(--success);
+  box-shadow: 0 3px 0 #047857;
 }
 
-.pg-run:hover {
-  background: #059669;
+.pg-run:hover:not(:disabled) {
+  background: #0ea371;
   transform: translateY(-1px);
+  box-shadow: 0 4px 0 #047857;
+}
+
+.pg-run:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #047857;
 }
 
 .pg-run:disabled {
-  opacity: 0.7;
   cursor: not-allowed;
-  transform: none;
+  opacity: 0.7;
 }
+
+/* Editor */
 
 .playground-editor {
   display: block;
   width: 100%;
-  background: #0f172a;
-  color: #e2e8f0;
+  padding: 22px;
   border: none;
   outline: none;
   resize: vertical;
-  padding: 22px;
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 2;
   font-family: Consolas, "Courier New", monospace;
   font-size: 0.92rem;
   line-height: 1.7;
-  tab-size: 2;
-  white-space: pre;
-  overflow-x: auto;
-  caret-color: var(--success);
+  color: #e2e8f0;
+  background: #0f172a;
+  caret-color: #ffd23f;
   transition: background 0.2s ease;
 }
 
@@ -87,35 +99,42 @@
   background: #111c33;
 }
 
+.playground-editor::selection {
+  color: #0f172a;
+  background: #ffd23f;
+}
+
+/* Output */
+
 .playground-output {
-  border-top: 1px solid #1e293b;
-  background: #020617;
-  padding: 16px 22px 20px;
   min-height: 160px;
+  padding: 16px 22px 20px;
+  background: #020617;
+  border-top: 1px solid #1e293b;
 }
 
 .output-label {
+  margin-bottom: 10px;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #64748b;
-  margin-bottom: 10px;
 }
 
 .output-hint {
-  color: #64748b;
   font-size: 0.9rem;
   font-style: italic;
+  color: #64748b;
 }
 
 .output-line {
   margin: 0;
   padding: 3px 0;
-  font-family: Consolas, "Courier New", monospace;
-  font-size: 0.9rem;
   white-space: pre-wrap;
   word-break: break-word;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.9rem;
   color: #a7f3d0;
   animation: lineIn 0.2s ease both;
 }
@@ -130,9 +149,72 @@
 }
 
 .output-line.info {
-  color: #94a3b8;
   font-style: italic;
+  color: #94a3b8;
 }
+
+/* Preview */
+
+.playground-preview {
+  padding: 16px 22px 20px;
+  background: #020617;
+  border-top: 1px solid #1e293b;
+}
+
+.preview-frame {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.preview-hint {
+  margin-top: 12px;
+}
+
+/* Expanded, full screen mode */
+
+.playground.expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border-radius: 0;
+  animation: expandIn 0.25s ease both;
+}
+
+.playground.expanded .playground-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.playground.expanded .playground-editor {
+  height: 100%;
+  overflow: auto;
+  resize: none;
+}
+
+.playground.expanded .playground-output,
+.playground.expanded .playground-preview {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  border-top: none;
+  border-left: 1px solid #1e293b;
+}
+
+.playground.expanded .preview-frame {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Keyframes */
 
 @keyframes lineIn {
   from {
@@ -142,6 +224,32 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Smaller screens */
+
+@media (max-width: 800px) {
+  .playground.expanded .playground-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .playground.expanded .playground-output,
+  .playground.expanded .playground-preview {
+    border-left: none;
+    border-top: 1px solid #1e293b;
   }
 }
 
@@ -158,82 +266,10 @@
     flex: 1;
   }
 }
-.playground-preview {
-  border-top: 1px solid #1e293b;
-  background: #020617;
-  padding: 16px 22px 20px;
-}
 
-.preview-frame {
-  display: block;
-  width: 100%;
-  min-height: 420px;
-  border: none;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.preview-hint {
-  margin-top: 12px;
-}
-.playground.expanded {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  margin: 0;
-  border-radius: 0;
-  display: flex;
-  flex-direction: column;
-  animation: expandIn 0.25s ease both;
-}
-
-.playground.expanded .playground-body {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.playground.expanded .playground-editor {
-  height: 100%;
-  resize: none;
-  overflow: auto;
-}
-
-.playground.expanded .playground-output,
-.playground.expanded .playground-preview {
-  border-top: none;
-  border-left: 1px solid #1e293b;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.playground.expanded .preview-frame {
-  flex: 1;
-  min-height: 0;
-}
-
-@keyframes expandIn {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@media (max-width: 800px) {
-  .playground.expanded .playground-body {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-
-  .playground.expanded .playground-output,
-  .playground.expanded .playground-preview {
-    border-left: none;
-    border-top: 1px solid #1e293b;
+@media (prefers-reduced-motion: reduce) {
+  .output-line,
+  .playground.expanded {
+    animation: none;
   }
 }
