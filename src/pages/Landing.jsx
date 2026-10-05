@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { achievements } from "../lib/achievements";
 import Reveal from "../components/Reveal";
+import Logo from "../components/Logo";
 import {
   BookOpenIcon,
   CodeIcon,
@@ -230,9 +231,8 @@ function Landing() {
 
       <header className="lp-nav" ref={navRef}>
         <div className="lp-container lp-nav-inner">
-          <Link to="/" className="lp-logo">
-            <span className="lp-mark">S</span>
-            StudyFlow
+          <Link to="/" className="lp-logo" aria-label="StudyFlow home">
+            <Logo size={36} />
           </Link>
           <nav className="lp-nav-links">
             {session ? (
@@ -390,7 +390,7 @@ function Landing() {
                     onMouseMove={handleSpotlight}
                   >
                     <span className="lp-feature-icon">
-                      <Icon size={24} />
+                      <Icon size={26} />
                     </span>
                     <h3>{feature.title}</h3>
                     <p>{feature.text}</p>
