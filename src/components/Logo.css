@@ -16,7 +16,7 @@
 }
 
 .brand-bookmark {
-  fill: #4f46e5;
+  fill: var(--primary);
 }
 
 .brand-wave {
@@ -31,7 +31,7 @@
 }
 
 .brand-name span {
-  color: #4f46e5;
+  color: var(--primary);
 }
 
 .brand.on-dark {
@@ -43,11 +43,11 @@
 }
 
 .brand.on-dark .brand-wave {
-  stroke: #5b21b6;
+  stroke: var(--primary);
 }
 
 .brand.on-dark .brand-name span {
-  color: #ddd6fe;
+  color: var(--accent);
 }
 
 @media (hover: hover) {
