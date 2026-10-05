@@ -10,22 +10,22 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 24px;
-  animation: profileIn 0.5s ease both;
+  animation: profileIn 0.5s ease backwards;
 }
 
 .profile-cover {
   position: relative;
   overflow: hidden;
   height: 130px;
-  background: linear-gradient(120deg, #4f46e5, #7c3aed 55%, #a855f7);
-  background-size: 200% 200%;
-  animation: coverShift 12s ease infinite;
+  background-color: var(--primary);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
 }
 
 .cover-circle {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
+  border: 2px solid rgba(255, 255, 255, 0.22);
   animation: coverFloat 8s ease-in-out infinite;
 }
 
@@ -41,6 +41,7 @@
   height: 110px;
   bottom: -50px;
   right: 28%;
+  border-color: rgba(255, 210, 63, 0.5);
   animation-delay: -4s;
 }
 
@@ -62,9 +63,9 @@
   font-size: 2.6rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(135deg, var(--primary), var(--purple));
+  background: var(--primary);
   border: 5px solid var(--card);
-  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 10px 22px rgba(15, 42, 122, 0.25);
   animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
 }
 
@@ -91,13 +92,13 @@
   align-items: center;
   gap: 4px;
   padding: 5px 12px;
-  border: 1px solid #ddd6fe;
+  border: 1px solid #cddcff;
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--primary);
-  background: #f5f3ff;
+  background: var(--primary-soft);
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
 }
@@ -164,9 +165,9 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 18px;
-  animation: profileIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: profileIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
   animation-delay: calc(var(--i, 0) * 0.08s + 0.2s);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .profile-stat::before {
@@ -176,7 +177,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--accent);
+  background: var(--primary);
 }
 
 .profile-stat-icon {
@@ -186,8 +187,8 @@
   border-radius: 12px;
   display: grid;
   place-items: center;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 14%, white);
+  color: var(--primary);
+  background: var(--primary-soft);
   transition: transform 0.3s ease;
 }
 
@@ -227,13 +228,13 @@
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: #ede9fe;
+  background: var(--primary-soft);
 }
 
 .badges-total div {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #4f46e5, #a855f7);
+  background: var(--primary);
   animation: profileFill 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s both;
 }
 
@@ -252,7 +253,7 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 20px;
-  animation: profileIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: profileIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
   animation-delay: calc(var(--i, 0) * 0.05s + 0.35s);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -270,14 +271,14 @@
 
 .badge-card.earned .badge-icon {
   color: #fff;
-  background: linear-gradient(135deg, #6d28d9, #a855f7);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+  background: var(--primary);
+  box-shadow: 0 5px 0 var(--primary-deep);
 }
 
 .badge-card.locked .badge-icon {
-  color: #a5b4fc;
-  background: #f8f7ff;
-  border: 2px dashed #ddd6fe;
+  color: #9db8ff;
+  background: var(--paper);
+  border: 2px dashed #cddcff;
 }
 
 .badge-lock {
@@ -290,7 +291,7 @@
   display: grid;
   place-items: center;
   color: #fff;
-  background: #a78bfa;
+  background: #9db8ff;
   border: 2px solid var(--card);
 }
 
@@ -318,8 +319,8 @@
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #6d28d9;
-  background: #f3e8ff;
+  color: var(--text);
+  background: #ffd23f;
 }
 
 .badge-progress {
@@ -331,13 +332,13 @@
   margin-bottom: 6px;
   overflow: hidden;
   border-radius: 999px;
-  background: #ede9fe;
+  background: var(--primary-soft);
 }
 
 .badge-bar div {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--primary), #a855f7);
+  background: var(--primary);
   animation: profileFill 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s both;
 }
 
@@ -351,12 +352,13 @@
 
 @media (hover: hover) {
   .edit-btn:hover {
-    background: #ede9fe;
+    background: #dbe6ff;
   }
 
   .profile-stat:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 20%, transparent);
+    border-color: #bfd3ff;
+    box-shadow: 0 12px 24px rgba(15, 42, 122, 0.08);
   }
 
   .profile-stat:hover .profile-stat-icon {
@@ -365,8 +367,8 @@
 
   .badge-card.earned:hover {
     transform: translateY(-6px);
-    border-color: #ddd6fe;
-    box-shadow: 0 18px 36px rgba(124, 58, 237, 0.18);
+    border-color: #bfd3ff;
+    box-shadow: 0 16px 32px rgba(15, 42, 122, 0.1);
   }
 
   .badge-card.earned:hover .badge-icon {
@@ -401,16 +403,6 @@
 @keyframes profileFill {
   from {
     width: 0;
-  }
-}
-
-@keyframes coverShift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
   }
 }
 
@@ -462,7 +454,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .profile-card,
-  .profile-cover,
   .cover-circle,
   .profile-avatar,
   .profile-stat,
