@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PlayIcon, ExpandIcon, ResetIcon, XIcon } from "./Icons";
 import "./CodePlayground.css";
 
 const SANDBOX = "allow-scripts allow-popups";
@@ -329,14 +330,25 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
         </div>
         <span className="playground-title">{title}</span>
         <div className="playground-actions">
-          <button className="pg-btn pg-reset" onClick={resetCode}>
-            Reset
+          <button className="pg-btn pg-reset" onClick={resetCode} title="Undo your changes">
+            <ResetIcon size={15} /> Reset
           </button>
-          <button className="pg-btn pg-reset" onClick={() => setExpanded(!expanded)}>
-            {expanded ? "✕ Close" : "⛶ Expand"}
+          <button
+            className="pg-btn pg-reset"
+            onClick={() => setExpanded(!expanded)}
+            title={expanded ? "Close full screen (Esc)" : "Open full screen"}
+          >
+            {expanded ? <XIcon size={15} /> : <ExpandIcon size={15} />}
+            {expanded ? "Close" : "Expand"}
           </button>
-          <button className="pg-btn pg-run" onClick={runCode} disabled={running}>
-            {running ? "Running..." : "▶ Run"}
+          <button
+            className="pg-btn pg-run"
+            onClick={runCode}
+            disabled={running}
+            title="Run your code (Ctrl and Enter)"
+          >
+            {!running && <PlayIcon size={14} />}
+            {running ? "Running..." : "Run"}
           </button>
         </div>
       </div>
@@ -348,6 +360,7 @@ function CodePlayground({ initialCode, mode = "javascript" }) {
           onChange={(event) => setCode(event.target.value)}
           onKeyDown={handleKeyDown}
           spellCheck={false}
+          aria-label="Code editor"
           rows={Math.max(code.split("\n").length + 1, 10)}
         />
 
