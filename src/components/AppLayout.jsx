@@ -2,53 +2,22 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { AchievementProvider } from "../context/AchievementContext";
-import { HistoryIcon, UserIcon } from "./Icons";
+import {
+  HomeIcon,
+  CoursesIcon,
+  TargetIcon,
+  HistoryIcon,
+  UserIcon,
+  LogoutIcon,
+} from "./Icons";
 import "./AppLayout.css";
 
-function HomeIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  );
-}
-
-function BookIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    </svg>
-  );
-}
-
-function TargetIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="6" />
-      <circle cx="12" cy="12" r="2" />
-    </svg>
-  );
-}
-
-function LogoutIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-  );
-}
-
 const links = [
-  { to: "/dashboard", label: "Dashboard", icon: <HomeIcon /> },
-  { to: "/courses", label: "Courses", icon: <BookIcon /> },
-  { to: "/quizzes", label: "Quizzes", icon: <TargetIcon /> },
-  { to: "/history", label: "History", icon: <HistoryIcon /> },
-  { to: "/profile", label: "Profile", icon: <UserIcon />, mobileOnly: true },
+  { to: "/dashboard", label: "Dashboard", icon: <HomeIcon size={22} /> },
+  { to: "/courses", label: "Courses", icon: <CoursesIcon size={22} /> },
+  { to: "/quizzes", label: "Quizzes", icon: <TargetIcon size={22} /> },
+  { to: "/history", label: "History", icon: <HistoryIcon size={22} /> },
+  { to: "/profile", label: "Profile", icon: <UserIcon size={22} />, mobileOnly: true },
 ];
 
 function AppLayout() {
@@ -95,7 +64,7 @@ function AppLayout() {
               </div>
             </NavLink>
             <button className="sidebar-link logout-btn" onClick={handleLogout}>
-              <LogoutIcon />
+              <LogoutIcon size={22} />
               <span>Log out</span>
             </button>
           </div>
