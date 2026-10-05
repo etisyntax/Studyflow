@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAchievements } from "../context/AchievementContext";
 import CountUp from "../components/CountUp";
+import RevisionPlan from "../components/RevisionPlan";
 import {
   CheckIcon,
   XIcon,
@@ -17,8 +18,6 @@ const letters = ["A", "B", "C", "D"];
 const RING = 327;
 const levelLabels = { easy: "Easy", medium: "Medium", hard: "Hard" };
 
-const confettiColors = ["#4f46e5", "#6d28d9", "#7c3aed", "#a855f7", "#c084fc", "#e9d5ff"];
-
 const confettiPieces = Array.from({ length: 70 }, (_, index) => ({
   id: index,
   left: Math.random() * 100,
@@ -27,7 +26,6 @@ const confettiPieces = Array.from({ length: 70 }, (_, index) => ({
   size: 6 + Math.random() * 6,
   spin: Math.random() > 0.5 ? 1 : -1,
   round: Math.random() > 0.6,
-  color: confettiColors[index % confettiColors.length],
 }));
 
 function Confetti() {
@@ -41,7 +39,6 @@ function Confetti() {
             left: `${piece.left}%`,
             width: `${piece.size}px`,
             height: `${piece.round ? piece.size : piece.size * 1.6}px`,
-            background: piece.color,
             animationDelay: `${piece.delay}s`,
             animationDuration: `${piece.duration}s`,
             "--spin": piece.spin,
@@ -68,11 +65,39 @@ function getMessage(percent) {
   return "Keep going. Review the lessons, then try again.";
 }
 
+function buildRevisionPlan(questions, answers, lessonMap) {
+  const totals = {};
+  questions.forEach((question) => {
+    if (question.lesson_id) {
+      totals[question.lesson_id] = (totals[question.lesson_id] || 0) + 1;
+    }
+  });
+
+  const missed = {};
+  answers.forEach((answer) => {
+    if (!answer.isCorrect && answer.lessonId) {
+      missed[answer.lessonId] = (missed[answer.lessonId] || 0) + 1;
+    }
+  });
+
+  return Object.keys(missed)
+    .filter((id) => lessonMap[id])
+    .map((id) => ({
+      lessonId: Number(id),
+      title: lessonMap[id].title,
+      position: lessonMap[id].position,
+      wrong: missed[id],
+      total: totals[id],
+    }))
+    .sort((a, b) => b.wrong / b.total - a.wrong / a.total || a.position - b.position);
+}
+
 function Quiz() {
   const { quizId } = useParams();
   const { checkForNewBadges } = useAchievements();
   const [quiz, setQuiz] = useState(null);
   const [nextQuiz, setNextQuiz] = useState(null);
+  const [lessonMap, setLessonMap] = useState({});
   const [previousBest, setPreviousBest] = useState(null);
   const [stage, setStage] = useState("loading");
   const [questions, setQuestions] = useState([]);
@@ -103,8 +128,11 @@ function Quiz() {
         return;
       }
 
-      const [questionRes, nextRes, pastRes] = await Promise.all([
-        supabase.from("questions").select("id, question, options").eq("quiz_id", quizId),
+      const [questionRes, nextRes, pastRes, lessonRes] = await Promise.all([
+        supabase
+          .from("questions")
+          .select("id, question, options, lesson_id")
+          .eq("quiz_id", quizId),
         supabase
           .from("quizzes")
           .select("id, title, difficulty")
@@ -112,6 +140,10 @@ function Quiz() {
           .eq("position", quizData.position + 1)
           .maybeSingle(),
         supabase.from("quiz_results").select("score, total").eq("quiz_id", quizId),
+        supabase
+          .from("lessons")
+          .select("id, title, position")
+          .eq("course_id", quizData.course_id),
       ]);
 
       if (questionRes.error || questionRes.data.length === 0) {
@@ -125,8 +157,14 @@ function Quiz() {
           ? Math.max(...pastResults.map((item) => Math.round((item.score / item.total) * 100)))
           : null;
 
+      const map = {};
+      (lessonRes.data || []).forEach((lesson) => {
+        map[lesson.id] = lesson;
+      });
+
       setQuiz(quizData);
       setNextQuiz(nextRes.data);
+      setLessonMap(map);
       setPreviousBest(best);
       setQuestions(shuffle(questionRes.data));
       setStage("question");
@@ -168,6 +206,7 @@ function Quiz() {
       ...previous,
       {
         questionId: question.id,
+        lessonId: question.lesson_id,
         question: question.question,
         options: question.options,
         chosen: index,
@@ -252,6 +291,10 @@ function Quiz() {
   const percent = Math.round((finalScore / finalTotal) * 100);
   const isNewBest = previousBest !== null && percent > previousBest;
   const passed = percent >= 70;
+
+  const revisionItems =
+    stage === "finished" ? buildRevisionPlan(questions, answers, lessonMap) : [];
+  const weakest = revisionItems[0];
 
   return (
     <div className="quiz-page" style={{ "--course-color": quiz.courses.color }}>
@@ -344,12 +387,6 @@ function Quiz() {
         <div className="quiz-card quiz-results">
           <div className="score-ring">
             <svg viewBox="0 0 120 120">
-              <defs>
-                <linearGradient id="quizRingGradient" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#4f46e5" />
-                  <stop offset="100%" stopColor="#a855f7" />
-                </linearGradient>
-              </defs>
               <circle className="ring-bg" cx="60" cy="60" r="52" />
               <circle
                 className="ring-fill"
@@ -406,6 +443,8 @@ function Quiz() {
             {saveError}
           </p>
 
+          <RevisionPlan items={revisionItems} courseId={quiz.courses.id} passed={passed} />
+
           <div className={`next-step ${passed ? "passed" : ""}`}>
             {passed && nextQuiz && (
               <>
@@ -428,7 +467,24 @@ function Quiz() {
               </div>
             )}
 
-            {!passed && (
+            {!passed && weakest && (
+              <>
+                <div>
+                  <strong>Strengthen this topic</strong>
+                  <p>
+                    Start with your weakest lesson, then come back and try again.
+                  </p>
+                </div>
+                <Link
+                  to={`/courses/${quiz.courses.id}/lessons/${weakest.lessonId}`}
+                  className="btn btn-primary"
+                >
+                  <BookOpenIcon size={18} /> Start with: {weakest.title}
+                </Link>
+              </>
+            )}
+
+            {!passed && !weakest && (
               <>
                 <div>
                   <strong>Strengthen this topic</strong>
