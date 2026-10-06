@@ -97,10 +97,10 @@ function History() {
     });
 
   const summary = [
-    { icon: ListIcon, color: "#4f46e5", value: totalAttempts, label: "Total attempts" },
-    { icon: BarChartIcon, color: "#6d28d9", value: average, suffix: "%", label: "Average score" },
-    { icon: TrophyIcon, color: "#7c3aed", value: best, suffix: "%", label: "Best score" },
-    { icon: CheckIcon, color: "#9333ea", value: passedQuizzes, label: "Quizzes passed" },
+    { icon: ListIcon, value: totalAttempts, label: "Total attempts" },
+    { icon: BarChartIcon, value: average, suffix: "%", label: "Average score" },
+    { icon: TrophyIcon, value: best, suffix: "%", label: "Best score" },
+    { icon: CheckIcon, value: passedQuizzes, label: "Quizzes passed" },
   ];
 
   let content;
@@ -116,11 +116,7 @@ function History() {
           {summary.map((card, index) => {
             const Icon = card.icon;
             return (
-              <div
-                key={card.label}
-                className="summary-card"
-                style={{ "--accent": card.color, "--i": index }}
-              >
+              <div key={card.label} className="summary-card" style={{ "--i": index }}>
                 <span className="summary-icon">
                   <Icon />
                 </span>
@@ -249,7 +245,6 @@ function History() {
     <div>
       <PageHeader
         icon={HistoryIcon}
-        theme="teal"
         title="Quiz history"
         subtitle="Every quiz you have taken, so you can see how far you have come."
       >

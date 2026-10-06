@@ -140,10 +140,10 @@ function Dashboard() {
   const badges = evaluateAchievements(computeStats({ courses, completions, results }));
 
   const statCards = [
-    { icon: BookOpenIcon, color: "#4f46e5", value: lessonsDone, total: totalLessons, label: "Lessons completed" },
-    { icon: LayersIcon, color: "#6d28d9", value: coursesStarted, label: "Courses started" },
-    { icon: TargetIcon, color: "#7c3aed", value: quizzesTaken, label: "Quizzes taken" },
-    { icon: BarChartIcon, color: "#9333ea", value: averageScore, suffix: "%", label: "Average quiz score" },
+    { icon: BookOpenIcon, value: lessonsDone, total: totalLessons, label: "Lessons completed" },
+    { icon: LayersIcon, value: coursesStarted, label: "Courses started" },
+    { icon: TargetIcon, value: quizzesTaken, label: "Quizzes taken" },
+    { icon: BarChartIcon, value: averageScore, suffix: "%", label: "Average quiz score" },
   ];
 
   return (
@@ -163,11 +163,7 @@ function Dashboard() {
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div
-              key={stat.label}
-              className="dash-stat"
-              style={{ "--accent": stat.color, "--i": index }}
-            >
+            <div key={stat.label} className="dash-stat" style={{ "--i": index }}>
               <span className="dash-stat-icon">
                 <Icon />
               </span>

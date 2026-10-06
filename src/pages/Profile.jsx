@@ -77,10 +77,10 @@ function Profile() {
   const earnedCount = badges.filter((badge) => badge.earned).length;
 
   const statCards = [
-    { icon: BookOpenIcon, color: "#4f46e5", value: stats.lessonsDone, label: "Lessons completed" },
-    { icon: LayersIcon, color: "#6d28d9", value: stats.coursesCompleted, label: "Courses completed" },
-    { icon: CheckIcon, color: "#7c3aed", value: stats.quizzesPassed, label: "Quizzes passed" },
-    { icon: TrophyIcon, color: "#9333ea", value: stats.bestScore, suffix: "%", label: "Best quiz score" },
+    { icon: BookOpenIcon, value: stats.lessonsDone, label: "Lessons completed" },
+    { icon: LayersIcon, value: stats.coursesCompleted, label: "Courses completed" },
+    { icon: CheckIcon, value: stats.quizzesPassed, label: "Quizzes passed" },
+    { icon: TrophyIcon, value: stats.bestScore, suffix: "%", label: "Best quiz score" },
   ];
 
   return (
@@ -100,6 +100,7 @@ function Profile() {
                 <input
                   value={name}
                   onChange={(event) => setName(event.target.value)}
+                  aria-label="Your full name"
                   autoFocus
                 />
                 <button type="submit" className="btn btn-primary" disabled={saving}>
@@ -132,11 +133,7 @@ function Profile() {
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div
-              key={stat.label}
-              className="profile-stat"
-              style={{ "--accent": stat.color, "--i": index }}
-            >
+            <div key={stat.label} className="profile-stat" style={{ "--i": index }}>
               <span className="profile-stat-icon">
                 <Icon />
               </span>
