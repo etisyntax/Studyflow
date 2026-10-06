@@ -13,11 +13,10 @@ function Reveal({ children, delay = 0, animation = "up", className = "" }) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
-        } else if (entry.boundingClientRect.top > 0) {
-          setVisible(false);
+          observer.disconnect();
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+      { threshold: 0.15, rootMargin: "0px 0px -6% 0px" }
     );
 
     observer.observe(element);

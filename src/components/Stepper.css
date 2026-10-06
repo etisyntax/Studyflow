@@ -1,0 +1,122 @@
+.stepper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+}
+
+.stp {
+  position: relative;
+  text-align: center;
+}
+
+.stp:not(:last-child)::before,
+.stp:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 31px;
+  left: calc(50% + 44px);
+  width: calc(100% + 30px - 88px);
+  height: 3px;
+  border-radius: 3px;
+}
+
+.stp:not(:last-child)::before {
+  background: #e3ebff;
+}
+
+.stp:not(:last-child)::after {
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.stp.active:not(:last-child)::after {
+  transform: scaleX(1);
+  transition: transform 0.7s ease 0.2s;
+}
+
+.stp-number {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #9db8ff;
+  background: #fff;
+  border: 3px solid #cddcff;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.4s ease;
+}
+
+.stp h3 {
+  margin-bottom: 8px;
+  font-size: 1.15rem;
+  color: #94a3b8;
+  transition: color 0.4s ease;
+}
+
+.stp p {
+  max-width: 260px;
+  margin: 0 auto;
+  color: #94a3b8;
+  opacity: 0.75;
+  transition: color 0.4s ease, opacity 0.4s ease;
+}
+
+.stp.active .stp-number {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 4px 0 var(--primary-deep);
+  transform: translateY(-2px);
+}
+
+.stp.active h3 {
+  color: var(--text);
+}
+
+.stp.active p {
+  color: var(--muted);
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .stepper {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .stp:not(:last-child)::before,
+  .stp:not(:last-child)::after {
+    top: calc(100% + 6px);
+    left: calc(50% - 1.5px);
+    width: 3px;
+    height: 24px;
+  }
+
+  .stp:not(:last-child)::after {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+
+  .stp.active:not(:last-child)::after {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stp *,
+  .stp::after {
+    transition: none !important;
+  }
+}
