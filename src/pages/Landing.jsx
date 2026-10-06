@@ -413,7 +413,7 @@ function Landing() {
         </div>
 
         <div className="lp-container lp-footer-bottom">
-          <p>&copy; 2026 StudyFlow. A final year project by Goodwill Okon.</p>
+          <p>&copy; 2026 StudyFlow. An IT defense project by Goodwill Okon.</p>
           <p>Made for students learning web development.</p>
         </div>
       </footer>
