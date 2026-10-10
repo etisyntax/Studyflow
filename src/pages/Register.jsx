@@ -3,14 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import PasswordInput from "../components/PasswordInput";
 import AuthLayout from "../components/AuthLayout";
-import { LayersIcon, CodeIcon, BarChartIcon } from "../components/Icons";
 import "./Auth.css";
-
-const registerPoints = [
-  { icon: LayersIcon, text: "A growing library of courses for every level" },
-  { icon: CodeIcon, text: "Practise every lesson in a live code editor" },
-  { icon: BarChartIcon, text: "Track your progress and earn badges" },
-];
 
 const strengthLabels = ["Too short", "Weak", "Fair", "Good", "Strong"];
 
@@ -94,16 +87,12 @@ function Register() {
   }
 
   return (
-    <AuthLayout
-      heading="Start your coding journey today."
-      text="Learn web development step by step, at your own pace, completely free."
-      points={registerPoints}
-    >
-      <h1 className="auth-in" style={{ "--d": "0.1s" }}>
+    <AuthLayout>
+      <h1 className="auth-in" style={{ "--d": "0.05s" }}>
         Create your account
       </h1>
-      <p className="auth-subtitle auth-in" style={{ "--d": "0.15s" }}>
-        Start learning in less than a minute.
+      <p className="auth-subtitle auth-in" style={{ "--d": "0.1s" }}>
+        Free, and ready in less than a minute.
       </p>
 
       {error && (
@@ -113,7 +102,7 @@ function Register() {
       )}
 
       <form onSubmit={handleSubmit}>
-        <div className="form-group auth-in" style={{ "--d": "0.2s" }}>
+        <div className="form-group auth-in" style={{ "--d": "0.15s" }}>
           <label htmlFor="register-name">Full name</label>
           <input
             id="register-name"
@@ -126,7 +115,7 @@ function Register() {
           />
         </div>
 
-        <div className="form-group auth-in" style={{ "--d": "0.25s" }}>
+        <div className="form-group auth-in" style={{ "--d": "0.2s" }}>
           <label htmlFor="register-email">Email</label>
           <input
             id="register-email"
@@ -139,9 +128,11 @@ function Register() {
           />
         </div>
 
-        <div className="form-group auth-in" style={{ "--d": "0.3s" }}>
-          <label>Password</label>
+        <div className="form-group auth-in" style={{ "--d": "0.25s" }}>
+          <label htmlFor="register-password">Password</label>
           <PasswordInput
+            id="register-password"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 6 characters"
@@ -159,9 +150,11 @@ function Register() {
           )}
         </div>
 
-        <div className="form-group auth-in" style={{ "--d": "0.35s" }}>
-          <label>Confirm password</label>
+        <div className="form-group auth-in" style={{ "--d": "0.3s" }}>
+          <label htmlFor="register-confirm">Confirm password</label>
           <PasswordInput
+            id="register-confirm"
+            autoComplete="new-password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Type your password again"
@@ -173,7 +166,7 @@ function Register() {
           )}
         </div>
 
-        <div className="auth-in" style={{ "--d": "0.4s" }}>
+        <div className="auth-in" style={{ "--d": "0.35s" }}>
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
             {loading && <span className="auth-spinner"></span>}
             {loading ? "Creating account..." : "Create account"}
@@ -181,7 +174,7 @@ function Register() {
         </div>
       </form>
 
-      <p className="auth-switch auth-in" style={{ "--d": "0.45s" }}>
+      <p className="auth-switch auth-in" style={{ "--d": "0.4s" }}>
         Already have an account? <Link to="/login">Log in</Link>
       </p>
     </AuthLayout>
