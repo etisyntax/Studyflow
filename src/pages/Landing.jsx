@@ -6,27 +6,16 @@ import { achievements } from "../lib/achievements";
 import Reveal from "../components/Reveal";
 import Logo from "../components/Logo";
 import Stepper from "../components/Stepper";
-import {
-  BookOpenIcon,
-  CodeIcon,
-  TargetIcon,
-  BarChartIcon,
-  AwardIcon,
-  LockIcon,
-  StarIcon,
-  TrophyIcon,
-  ArrowRightIcon,
-  CheckIcon,
-} from "../components/Icons";
+import { CodeIcon, TrophyIcon, ArrowRightIcon, CheckIcon } from "../components/Icons";
 import "./Landing.css";
 
 const features = [
-  { icon: BookOpenIcon, title: "Structured Lessons", text: "Short, clear lessons that build on each other, one step at a time." },
-  { icon: CodeIcon, title: "Live Code Playground", text: "Edit the example code and run it instantly, right inside every lesson." },
-  { icon: TargetIcon, title: "Quizzes at Your Level", text: "Easy, Medium and Hard quizzes, with instant feedback on every answer." },
-  { icon: BarChartIcon, title: "Progress Tracking", text: "Watch your lessons, scores and course progress grow on your dashboard." },
-  { icon: AwardIcon, title: "Badges to Earn", text: `Unlock ${achievements.length} achievements as you learn, and celebrate every milestone.` },
-  { icon: LockIcon, title: "Verified Scores", text: "Answers are marked on the server, so every score is real and earned." },
+  { title: "Structured Lessons", text: "Short, clear lessons that build on each other, one step at a time." },
+  { title: "Live Code Playground", text: "Edit the example code and run it instantly, right inside every lesson." },
+  { title: "Quizzes at Your Level", text: "Easy, Medium and Hard quizzes, with instant feedback on every answer." },
+  { title: "Progress Tracking", text: "Watch your lessons, scores and course progress grow on your dashboard." },
+  { title: "Badges to Earn", text: `Unlock ${achievements.length} achievements as you learn, and celebrate every milestone.` },
+  { title: "Verified Scores", text: "Answers are marked on the server, so every score is real and earned." },
 ];
 
 const steps = [
@@ -232,22 +221,18 @@ function Landing() {
 
         <div className="lp-container lp-hero-grid">
           <div className="lp-hero-text">
-            <span className="lp-pill lp-in" style={{ "--d": "0s" }}>
-              <StarIcon size={14} /> Learning made simple
-            </span>
-
-            <h1 className="lp-hero-title lp-in" style={{ "--d": "0.1s" }}>
+            <h1 className="lp-hero-title lp-in" style={{ "--d": "0s" }}>
               Learn. Practice.
               <br />
               <span className="lp-highlight">Understand.</span>
             </h1>
 
-            <p className="lp-in" style={{ "--d": "0.2s" }}>
+            <p className="lp-in" style={{ "--d": "0.1s" }}>
               StudyFlow brings lessons, practice and quizzes together in one place, so you
               always know how well you understand what you study.
             </p>
 
-            <div className="lp-hero-actions lp-in" style={{ "--d": "0.3s" }}>
+            <div className="lp-hero-actions lp-in" style={{ "--d": "0.2s" }}>
               <Link to="/register" className="btn btn-primary lp-cta-primary">
                 Start Learning Free <ArrowRightIcon size={18} />
               </Link>
@@ -256,7 +241,7 @@ function Landing() {
               </Link>
             </div>
 
-            <ul className="lp-checks lp-in" style={{ "--d": "0.4s" }}>
+            <ul className="lp-checks lp-in" style={{ "--d": "0.3s" }}>
               <li><CheckIcon size={16} /> Free to use</li>
               <li><CheckIcon size={16} /> Nothing to install</li>
               <li><CheckIcon size={16} /> Works on any device</li>
@@ -265,7 +250,7 @@ function Landing() {
 
           <div
             className="lp-hero-visual lp-in"
-            style={{ "--d": "0.25s" }}
+            style={{ "--d": "0.2s" }}
             onMouseMove={handleTilt}
             onMouseLeave={resetTilt}
           >
@@ -324,20 +309,15 @@ function Landing() {
           />
 
           <div className="lp-feature-grid">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Reveal key={feature.title} delay={(index % 3) * 0.08}>
-                  <div className="lp-feature">
-                    <span className="lp-feature-icon">
-                      <Icon size={26} />
-                    </span>
-                    <h3>{feature.title}</h3>
-                    <p>{feature.text}</p>
-                  </div>
-                </Reveal>
-              );
-            })}
+            {features.map((feature, index) => (
+              <Reveal key={feature.title} delay={(index % 3) * 0.08}>
+                <div className="lp-feature">
+                  <span className="lp-feature-num">{String(index + 1).padStart(2, "0")}</span>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.text}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -388,33 +368,28 @@ function Landing() {
       </section>
 
       <footer className="lp-footer">
-        <div className="lp-container lp-footer-grid">
-          <div className="lp-footer-brand">
-            <Logo onDark size={34} />
-            <p>
-              A learning platform where students study, practise and test their web
-              development skills, all in one place.
-            </p>
+        <div className="lp-container">
+          <div className="lp-footer-top">
+            <div className="lp-footer-brand">
+              <Logo size={30} />
+              <p>
+                Built by a student, for students who want to learn, practise and test in one
+                place.
+              </p>
+            </div>
+
+            <nav className="lp-footer-links" aria-label="Footer">
+              <Link to="/courses">Courses</Link>
+              <Link to="/quizzes">Quizzes</Link>
+              <Link to="/register">Create account</Link>
+              <Link to="/login">Log in</Link>
+            </nav>
           </div>
 
-          <div className="lp-footer-col">
-            <h4>Learn</h4>
-            <Link to="/courses">Courses</Link>
-            <Link to="/quizzes">Quizzes</Link>
-            <Link to="/dashboard">Dashboard</Link>
+          <div className="lp-footer-bottom">
+            <p>&copy; 2026 StudyFlow</p>
+            <p>An IT defense project</p>
           </div>
-
-          <div className="lp-footer-col">
-            <h4>Account</h4>
-            <Link to="/register">Create account</Link>
-            <Link to="/login">Log in</Link>
-            <Link to="/profile">Profile</Link>
-          </div>
-        </div>
-
-        <div className="lp-container lp-footer-bottom">
-          <p>&copy; 2026 StudyFlow. An IT defense project by Goodwill Okon.</p>
-          <p>Made for students learning web development.</p>
         </div>
       </footer>
     </div>
