@@ -5,14 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import AchievementsPanel from "../components/AchievementsPanel";
 import CountUp from "../components/CountUp";
 import { computeStats, evaluateAchievements } from "../lib/achievements";
-import {
-  BookOpenIcon,
-  CheckIcon,
-  LayersIcon,
-  TargetIcon,
-  BarChartIcon,
-  ArrowRightIcon,
-} from "../components/Icons";
+import { CheckIcon, TargetIcon, ArrowRightIcon } from "../components/Icons";
 import "./Dashboard.css";
 
 function getGreeting() {
@@ -140,10 +133,10 @@ function Dashboard() {
   const badges = evaluateAchievements(computeStats({ courses, completions, results }));
 
   const statCards = [
-    { icon: BookOpenIcon, value: lessonsDone, total: totalLessons, label: "Lessons completed" },
-    { icon: LayersIcon, value: coursesStarted, label: "Courses started" },
-    { icon: TargetIcon, value: quizzesTaken, label: "Quizzes taken" },
-    { icon: BarChartIcon, value: averageScore, suffix: "%", label: "Average quiz score" },
+    { value: lessonsDone, total: totalLessons, label: "Lessons completed" },
+    { value: coursesStarted, label: "Courses started" },
+    { value: quizzesTaken, label: "Quizzes taken" },
+    { value: averageScore, suffix: "%", label: "Average quiz score" },
   ];
 
   return (
@@ -160,24 +153,16 @@ function Dashboard() {
       </div>
 
       <div className="dash-stats">
-        {statCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.label} className="dash-stat" style={{ "--i": index }}>
-              <span className="dash-stat-icon">
-                <Icon />
-              </span>
-              <div>
-                <strong>
-                  <CountUp end={stat.value} />
-                  {stat.suffix}
-                  {stat.total !== undefined && <small> / {stat.total}</small>}
-                </strong>
-                <span>{stat.label}</span>
-              </div>
-            </div>
-          );
-        })}
+        {statCards.map((stat, index) => (
+          <div key={stat.label} className="dash-stat" style={{ "--i": index }}>
+            <strong>
+              <CountUp end={stat.value} />
+              {stat.suffix}
+              {stat.total !== undefined && <small> / {stat.total}</small>}
+            </strong>
+            <span>{stat.label}</span>
+          </div>
+        ))}
       </div>
 
       <div className="dash-grid">
