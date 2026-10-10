@@ -131,7 +131,11 @@ function History() {
         ) : (
           <>
             <div className="history-toolbar">
-              <select value={topic} onChange={(e) => setTopic(e.target.value)}>
+              <select
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                aria-label="Filter by topic"
+              >
                 <option value="all">All topics</option>
                 {courses.map((course) => (
                   <option key={course.id} value={String(course.id)}>
@@ -140,7 +144,11 @@ function History() {
                 ))}
               </select>
 
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                aria-label="Sort attempts"
+              >
                 <option value="newest">Newest first</option>
                 <option value="oldest">Oldest first</option>
                 <option value="highest">Highest score</option>
@@ -229,7 +237,6 @@ function History() {
   return (
     <div>
       <PageHeader
-        icon={HistoryIcon}
         title="Quiz history"
         subtitle="Every quiz you have taken, so you can see how far you have come."
       >

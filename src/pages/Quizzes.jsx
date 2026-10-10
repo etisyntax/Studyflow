@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
 import PageHeader from "../components/PageHeader";
 import CountUp from "../components/CountUp";
-import { CheckIcon, SearchIcon, ClockIcon, TargetIcon } from "../components/Icons";
+import { CheckIcon, SearchIcon, ClockIcon } from "../components/Icons";
 import "./Quizzes.css";
 
 const levelOrder = { easy: 1, medium: 2, hard: 3 };
@@ -195,8 +195,6 @@ function Quizzes() {
   return (
     <div>
       <PageHeader
-        icon={TargetIcon}
-        theme="pink"
         title="Available quizzes"
         subtitle="Search, filter and start a quiz to test what you have learned."
       >
@@ -224,12 +222,17 @@ function Quizzes() {
           <input
             type="text"
             placeholder="Search quizzes"
+            aria-label="Search quizzes"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        <select value={topic} onChange={(e) => setTopic(e.target.value)}>
+        <select
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          aria-label="Filter by topic"
+        >
           <option value="all">All topics</option>
           {courses.map((course) => (
             <option key={course.id} value={String(course.id)}>
@@ -238,14 +241,22 @@ function Quizzes() {
           ))}
         </select>
 
-        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+        <select
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+          aria-label="Filter by difficulty"
+        >
           <option value="all">All difficulty</option>
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
         </select>
 
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          aria-label="Sort quizzes"
+        >
           <option value="default">Course order</option>
           <option value="easiest">Easiest first</option>
           <option value="hardest">Hardest first</option>

@@ -86,8 +86,6 @@ function Courses() {
   return (
     <div>
       <PageHeader
-        icon={BookOpenIcon}
-        theme="indigo"
         title="Courses"
         subtitle="Choose a course and start learning at your own pace."
       >
