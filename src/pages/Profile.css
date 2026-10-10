@@ -66,7 +66,7 @@
   background: var(--primary);
   border: 5px solid var(--card);
   box-shadow: 0 10px 22px rgba(15, 42, 122, 0.25);
-  animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+  animation: avatarPop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
 .profile-info {
@@ -146,7 +146,7 @@
   color: var(--primary);
 }
 
-/* Stats */
+/* Stats: just the number and its label */
 
 .profile-stats {
   display: grid;
@@ -156,50 +156,27 @@
 }
 
 .profile-stat {
-  position: relative;
-  overflow: hidden;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 20px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 18px;
-  animation: profileIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  animation: profileIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(var(--i, 0) * 0.08s + 0.2s);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.profile-stat::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--primary);
-}
-
-.profile-stat-icon {
-  width: 42px;
-  height: 42px;
-  flex-shrink: 0;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  color: var(--primary);
-  background: var(--primary-soft);
-  transition: transform 0.3s ease;
-}
-
 .profile-stat strong {
-  display: block;
-  font-size: 1.5rem;
+  font-size: 2rem;
+  font-weight: 800;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .profile-stat span {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
@@ -253,7 +230,7 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 20px;
-  animation: profileIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  animation: profileIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(var(--i, 0) * 0.05s + 0.35s);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -266,7 +243,7 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.4s ease;
 }
 
 .badge-card.earned .badge-icon {
@@ -348,6 +325,32 @@
   color: var(--muted);
 }
 
+/* Log out: only shown on phones, where the bottom bar has no room for it */
+
+.profile-logout {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 28px;
+  padding: 14px;
+  border: 2px solid #fecaca;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--danger);
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.profile-logout:active {
+  transform: scale(0.98);
+  background: #fef2f2;
+}
+
 /* Hover effects on devices with a mouse */
 
 @media (hover: hover) {
@@ -356,23 +359,15 @@
   }
 
   .profile-stat:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     border-color: #bfd3ff;
     box-shadow: 0 12px 24px rgba(15, 42, 122, 0.08);
   }
 
-  .profile-stat:hover .profile-stat-icon {
-    transform: rotate(-8deg) scale(1.08);
-  }
-
   .badge-card.earned:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
     border-color: #bfd3ff;
     box-shadow: 0 16px 32px rgba(15, 42, 122, 0.1);
-  }
-
-  .badge-card.earned:hover .badge-icon {
-    transform: rotate(-10deg) scale(1.1);
   }
 }
 
@@ -381,18 +376,18 @@
 @keyframes profileIn {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.97);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes avatarPop {
   from {
     opacity: 0;
-    transform: scale(0.4);
+    transform: scale(0.6);
   }
   to {
     opacity: 1;
@@ -424,6 +419,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .profile-logout {
+    display: flex;
+  }
+}
+
 @media (max-width: 600px) {
   .profile-cover {
     height: 100px;
@@ -449,6 +450,10 @@
 
   .name-row {
     justify-content: center;
+  }
+
+  .profile-stat strong {
+    font-size: 1.6rem;
   }
 }
 

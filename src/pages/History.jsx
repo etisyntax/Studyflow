@@ -3,14 +3,7 @@ import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
 import PageHeader from "../components/PageHeader";
 import CountUp from "../components/CountUp";
-import {
-  ListIcon,
-  BarChartIcon,
-  TrophyIcon,
-  CheckIcon,
-  HistoryIcon,
-  ArrowRightIcon,
-} from "../components/Icons";
+import { HistoryIcon, ArrowRightIcon } from "../components/Icons";
 import "./History.css";
 
 const levelLabels = { easy: "Easy", medium: "Medium", hard: "Hard" };
@@ -97,10 +90,10 @@ function History() {
     });
 
   const summary = [
-    { icon: ListIcon, value: totalAttempts, label: "Total attempts" },
-    { icon: BarChartIcon, value: average, suffix: "%", label: "Average score" },
-    { icon: TrophyIcon, value: best, suffix: "%", label: "Best score" },
-    { icon: CheckIcon, value: passedQuizzes, label: "Quizzes passed" },
+    { value: totalAttempts, label: "Total attempts" },
+    { value: average, suffix: "%", label: "Average score" },
+    { value: best, suffix: "%", label: "Best score" },
+    { value: passedQuizzes, label: "Quizzes passed" },
   ];
 
   let content;
@@ -113,23 +106,15 @@ function History() {
     content = (
       <>
         <div className="history-summary">
-          {summary.map((card, index) => {
-            const Icon = card.icon;
-            return (
-              <div key={card.label} className="summary-card" style={{ "--i": index }}>
-                <span className="summary-icon">
-                  <Icon />
-                </span>
-                <div>
-                  <strong>
-                    <CountUp end={card.value} />
-                    {card.suffix}
-                  </strong>
-                  <span>{card.label}</span>
-                </div>
-              </div>
-            );
-          })}
+          {summary.map((card, index) => (
+            <div key={card.label} className="summary-card" style={{ "--i": index }}>
+              <strong>
+                <CountUp end={card.value} />
+                {card.suffix}
+              </strong>
+              <span>{card.label}</span>
+            </div>
+          ))}
         </div>
 
         {totalAttempts === 0 ? (

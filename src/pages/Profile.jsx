@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { loadAchievementData } from "../lib/achievements";
 import CountUp from "../components/CountUp";
-import {
-  LockIcon,
-  EditIcon,
-  CheckIcon,
-  BookOpenIcon,
-  LayersIcon,
-  TrophyIcon,
-} from "../components/Icons";
+import { LockIcon, EditIcon, CheckIcon, LogoutIcon } from "../components/Icons";
 import "./Profile.css";
 
 function Profile() {
   const { user, profile, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [editing, setEditing] = useState(false);
@@ -60,6 +55,11 @@ function Profile() {
     setMessage("Name updated.");
   }
 
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate("/");
+  }
+
   const fullName = profile && profile.full_name ? profile.full_name : user.email;
   const initial = fullName.charAt(0).toUpperCase();
   const memberSince =
@@ -77,10 +77,10 @@ function Profile() {
   const earnedCount = badges.filter((badge) => badge.earned).length;
 
   const statCards = [
-    { icon: BookOpenIcon, value: stats.lessonsDone, label: "Lessons completed" },
-    { icon: LayersIcon, value: stats.coursesCompleted, label: "Courses completed" },
-    { icon: CheckIcon, value: stats.quizzesPassed, label: "Quizzes passed" },
-    { icon: TrophyIcon, value: stats.bestScore, suffix: "%", label: "Best quiz score" },
+    { value: stats.lessonsDone, label: "Lessons completed" },
+    { value: stats.coursesCompleted, label: "Courses completed" },
+    { value: stats.quizzesPassed, label: "Quizzes passed" },
+    { value: stats.bestScore, suffix: "%", label: "Best quiz score" },
   ];
 
   return (
@@ -130,23 +130,15 @@ function Profile() {
       </div>
 
       <div className="profile-stats">
-        {statCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <div key={stat.label} className="profile-stat" style={{ "--i": index }}>
-              <span className="profile-stat-icon">
-                <Icon />
-              </span>
-              <div>
-                <strong>
-                  <CountUp end={stat.value} />
-                  {stat.suffix}
-                </strong>
-                <span>{stat.label}</span>
-              </div>
-            </div>
-          );
-        })}
+        {statCards.map((stat, index) => (
+          <div key={stat.label} className="profile-stat" style={{ "--i": index }}>
+            <strong>
+              <CountUp end={stat.value} />
+              {stat.suffix}
+            </strong>
+            <span>{stat.label}</span>
+          </div>
+        ))}
       </div>
 
       <div className="badges-head">
@@ -203,6 +195,10 @@ function Profile() {
           );
         })}
       </div>
+
+      <button className="profile-logout" onClick={handleLogout}>
+        <LogoutIcon size={20} /> Log out
+      </button>
     </div>
   );
 }

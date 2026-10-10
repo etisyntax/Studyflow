@@ -1,24 +1,30 @@
+import { useLocation } from "react-router";
 import "./PageHeader.css";
 
-function PageHeader({ icon: Icon, title, subtitle, theme = "indigo", children }) {
+const routeLabels = {
+  courses: "Learn",
+  quizzes: "Practice",
+  history: "Track",
+};
+
+function PageHeader({ title, subtitle, label, children }) {
+  const { pathname } = useLocation();
+  const section = pathname.split("/")[1];
+  const eyebrow = label || routeLabels[section];
+
   return (
-    <div className={`hero-header theme-${theme}`}>
+    <header className="hero-header">
       <span className="ph-circle one"></span>
       <span className="ph-circle two"></span>
 
-      {Icon && (
-        <span className="ph-icon">
-          <Icon size={26} />
-        </span>
-      )}
-
       <div className="ph-text">
+        {eyebrow && <p className="ph-label">{eyebrow}</p>}
         <h1>{title}</h1>
-        {subtitle && <p>{subtitle}</p>}
+        {subtitle && <p className="ph-subtitle">{subtitle}</p>}
       </div>
 
       {children && <div className="ph-extra">{children}</div>}
-    </div>
+    </header>
   );
 }
 

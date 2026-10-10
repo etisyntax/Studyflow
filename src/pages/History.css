@@ -1,4 +1,4 @@
-/* Summary cards */
+/* Summary cards: just the number and its label */
 
 .history-summary {
   display: grid;
@@ -8,50 +8,27 @@
 }
 
 .summary-card {
-  position: relative;
-  overflow: hidden;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 22px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 18px;
-  animation: historyIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  animation: historyIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: calc(var(--i, 0) * 0.08s + 0.1s);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.summary-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--primary);
-}
-
-.summary-icon {
-  width: 46px;
-  height: 46px;
-  flex-shrink: 0;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  color: var(--primary);
-  background: var(--primary-soft);
-  transition: transform 0.3s ease;
-}
-
 .summary-card strong {
-  display: block;
-  font-size: 1.5rem;
+  font-size: 2rem;
+  font-weight: 800;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .summary-card span {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
@@ -170,10 +147,6 @@
   transition: background 0.2s ease;
 }
 
-.history-table tbody tr td:first-child {
-  box-shadow: inset 4px 0 0 var(--course-color);
-}
-
 .h-date {
   white-space: nowrap;
   color: var(--muted);
@@ -195,7 +168,6 @@
   font-weight: 800;
   color: #fff;
   background: var(--course-color);
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .h-quiz {
@@ -323,21 +295,13 @@
 
 @media (hover: hover) {
   .summary-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     border-color: #bfd3ff;
     box-shadow: 0 12px 24px rgba(15, 42, 122, 0.08);
   }
 
-  .summary-card:hover .summary-icon {
-    transform: rotate(-8deg) scale(1.08);
-  }
-
   .history-table tbody tr:hover {
     background: #f5f8ff;
-  }
-
-  .history-table tbody tr:hover .h-mark {
-    transform: rotate(-8deg) scale(1.08);
   }
 
   .h-retake:hover {
@@ -354,18 +318,18 @@
 @keyframes historyIn {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.97);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes rowIn {
   from {
     opacity: 0;
-    transform: translateX(-16px);
+    transform: translateX(-12px);
   }
   to {
     opacity: 1;
@@ -393,17 +357,11 @@
   }
 
   .summary-card {
-    padding: 14px;
-    gap: 10px;
-  }
-
-  .summary-icon {
-    width: 38px;
-    height: 38px;
+    padding: 16px;
   }
 
   .summary-card strong {
-    font-size: 1.25rem;
+    font-size: 1.6rem;
   }
 
   .history-count {
