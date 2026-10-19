@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { AchievementProvider } from "../context/AchievementContext";
 import Logo from "./Logo";
+import ConfirmDialog from "./ConfirmDialog";
 import {
   HomeIcon,
   CoursesIcon,
@@ -25,11 +27,13 @@ function AppLayout() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const name = profile && profile.full_name ? profile.full_name : user.email;
   const initial = name.charAt(0).toUpperCase();
 
   async function handleLogout() {
+    setConfirmOpen(false);
     await supabase.auth.signOut();
     navigate("/");
   }
@@ -63,7 +67,7 @@ function AppLayout() {
                 <span>View profile</span>
               </div>
             </NavLink>
-            <button className="sidebar-link logout-btn" onClick={handleLogout}>
+            <button className="sidebar-link logout-btn" onClick={() => setConfirmOpen(true)}>
               <LogoutIcon size={22} />
               <span>Log out</span>
             </button>
@@ -76,6 +80,15 @@ function AppLayout() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Log out?"
+        message="You'll need to log in again to continue learning."
+        confirmLabel="Log out"
+        onConfirm={handleLogout}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </AchievementProvider>
   );
 }

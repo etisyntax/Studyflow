@@ -1,0 +1,94 @@
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.45);
+  animation: confirmFade 0.2s ease both;
+}
+
+.confirm-box {
+  width: 100%;
+  max-width: 380px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+  animation: confirmIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.confirm-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--danger);
+  background: #fef2f2;
+}
+
+.confirm-box h2 {
+  margin-bottom: 6px;
+  font-size: 1.3rem;
+}
+
+.confirm-box p {
+  margin-bottom: 22px;
+  color: var(--muted);
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.confirm-danger {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--danger);
+  box-shadow: 0 4px 0 #b91c1c;
+  cursor: pointer;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.confirm-danger:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b91c1c;
+}
+
+@keyframes confirmFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes confirmIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-backdrop,
+  .confirm-box {
+    animation: none;
+  }
+}

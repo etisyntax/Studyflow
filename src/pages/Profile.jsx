@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { loadAchievementData } from "../lib/achievements";
 import CountUp from "../components/CountUp";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { LockIcon, EditIcon, CheckIcon, LogoutIcon } from "../components/Icons";
 import "./Profile.css";
 
@@ -16,6 +17,7 @@ function Profile() {
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     loadAchievementData()
@@ -56,6 +58,7 @@ function Profile() {
   }
 
   async function handleLogout() {
+    setConfirmOpen(false);
     await supabase.auth.signOut();
     navigate("/");
   }
@@ -196,9 +199,18 @@ function Profile() {
         })}
       </div>
 
-      <button className="profile-logout" onClick={handleLogout}>
+      <button className="profile-logout" onClick={() => setConfirmOpen(true)}>
         <LogoutIcon size={20} /> Log out
       </button>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Log out?"
+        message="You'll need to log in again to continue learning."
+        confirmLabel="Log out"
+        onConfirm={handleLogout}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }
