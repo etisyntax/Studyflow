@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import { supabase } from "../lib/supabase";
 import { useAchievements } from "../context/AchievementContext";
 import CountUp from "../components/CountUp";
@@ -65,6 +65,37 @@ function getMessage(percent) {
   return "Keep going. Review the lessons, then try again.";
 }
 
+// The finished result is kept for this browser tab, so a student can open a
+// lesson from the revision plan and come back to the same plan afterwards.
+function storageKey(quizId) {
+  return `studyflow-result-${quizId}`;
+}
+
+function readSavedResult(quizId) {
+  try {
+    const raw = sessionStorage.getItem(storageKey(quizId));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeSavedResult(quizId, value) {
+  try {
+    sessionStorage.setItem(storageKey(quizId), JSON.stringify(value));
+  } catch {
+    // Storage can be full or blocked. The quiz still works without it.
+  }
+}
+
+function clearSavedResult(quizId) {
+  try {
+    sessionStorage.removeItem(storageKey(quizId));
+  } catch {
+    // Nothing to clear.
+  }
+}
+
 function buildRevisionPlan(questions, answers, lessonMap) {
   const totals = {};
   questions.forEach((question) => {
@@ -94,6 +125,7 @@ function buildRevisionPlan(questions, answers, lessonMap) {
 
 function Quiz() {
   const { quizId } = useParams();
+  const location = useLocation();
   const { checkForNewBadges } = useAchievements();
   const [quiz, setQuiz] = useState(null);
   const [nextQuiz, setNextQuiz] = useState(null);
@@ -112,6 +144,7 @@ function Quiz() {
   const [saved, setSaved] = useState(null);
   const [saveError, setSaveError] = useState("");
   const [showReview, setShowReview] = useState(false);
+  const [reviewed, setReviewed] = useState([]);
 
   useEffect(() => {
     async function loadQuiz() {
@@ -165,13 +198,54 @@ function Quiz() {
       setQuiz(quizData);
       setNextQuiz(nextRes.data);
       setLessonMap(map);
+
+      // Coming back to this quiz from a lesson? Show the same results and plan.
+      const stored = readSavedResult(quizId);
+      const returning =
+        stored && (stored.key === location.key || location.state?.backToPlan);
+
+      if (returning) {
+        setQuestions(stored.questions);
+        setAnswers(stored.answers);
+        setScore(stored.score);
+        setSaved(stored.saved);
+        setPreviousBest(stored.previousBest);
+        setReviewed(stored.reviewed || []);
+        setStage("finished");
+        return;
+      }
+
+      clearSavedResult(quizId);
       setPreviousBest(best);
       setQuestions(shuffle(questionRes.data));
       setStage("question");
     }
 
     loadQuiz();
+    // Runs once per quiz. location is read only on arrival, to decide whether to restore.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizId]);
+
+  // Keep the finished result up to date while the results screen is showing.
+  useEffect(() => {
+    if (stage !== "finished" || answers.length === 0) return;
+
+    writeSavedResult(quizId, {
+      key: location.key,
+      questions,
+      answers,
+      score,
+      saved,
+      previousBest,
+      reviewed,
+    });
+  }, [stage, saved, reviewed, answers, questions, score, previousBest, quizId, location.key]);
+
+  function markReviewed(lessonId) {
+    setReviewed((previous) =>
+      previous.includes(lessonId) ? previous : [...previous, lessonId]
+    );
+  }
 
   async function chooseAnswer(index) {
     if (selected !== null || checking) return;
@@ -252,6 +326,8 @@ function Quiz() {
   }
 
   function restartQuiz() {
+    clearSavedResult(quizId);
+    setReviewed([]);
     const lastPercent = Math.round((finalScore / finalTotal) * 100);
     setPreviousBest((best) => (best === null ? lastPercent : Math.max(best, lastPercent)));
     setQuestions(shuffle(questions));
@@ -443,7 +519,14 @@ function Quiz() {
             {saveError}
           </p>
 
-          <RevisionPlan items={revisionItems} courseId={quiz.courses.id} passed={passed} />
+          <RevisionPlan
+            items={revisionItems}
+            courseId={quiz.courses.id}
+            quizId={quiz.id}
+            passed={passed}
+            reviewed={reviewed}
+            onReview={markReviewed}
+          />
 
           <div className={`next-step ${passed ? "passed" : ""}`}>
             {passed && nextQuiz && (
@@ -477,6 +560,8 @@ function Quiz() {
                 </div>
                 <Link
                   to={`/courses/${quiz.courses.id}/lessons/${weakest.lessonId}`}
+                  state={{ fromQuiz: quiz.id }}
+                  onClick={() => markReviewed(weakest.lessonId)}
                   className="btn btn-primary"
                 >
                   <BookOpenIcon size={18} /> Start with: {weakest.title}

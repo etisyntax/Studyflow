@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import Markdown from "react-markdown";
 import { supabase } from "../lib/supabase";
 import CodePlayground from "../components/CodePlayground";
 import { useAchievements } from "../context/AchievementContext";
-import { ArrowRightIcon, CheckIcon } from "../components/Icons";
+import { ArrowRightIcon, CheckIcon, TargetIcon } from "../components/Icons";
 import "./Lesson.css";
 
 function Lesson() {
   const { courseId, lessonId } = useParams();
+  const location = useLocation();
+  // Set when the student opened this lesson from a quiz's revision plan.
+  const fromQuiz = location.state?.fromQuiz;
+  const planState = fromQuiz ? { fromQuiz } : undefined;
   const { checkForNewBadges } = useAchievements();
   const [lesson, setLesson] = useState(null);
   const [allLessons, setAllLessons] = useState([]);
@@ -109,9 +113,15 @@ function Lesson() {
         <div ref={barRef}></div>
       </div>
 
-      <Link to={`/courses/${courseId}`} className="back-link">
-        <ArrowRightIcon size={16} className="back-icon" /> Back to {lesson.courses.title}
-      </Link>
+      {fromQuiz ? (
+        <Link to={`/quizzes/${fromQuiz}`} state={{ backToPlan: true }} className="back-link">
+          <ArrowRightIcon size={16} className="back-icon" /> Back to your revision plan
+        </Link>
+      ) : (
+        <Link to={`/courses/${courseId}`} className="back-link">
+          <ArrowRightIcon size={16} className="back-icon" /> Back to {lesson.courses.title}
+        </Link>
+      )}
 
       <div className="lesson-hero">
         <span className="lh-circle one"></span>
@@ -171,9 +181,28 @@ function Lesson() {
         {saveError && <p className="save-error">{saveError}</p>}
       </div>
 
+      {fromQuiz && (
+        <div className="plan-return">
+          <span className="plan-return-icon">
+            <TargetIcon size={20} />
+          </span>
+          <div>
+            <strong>Done with this lesson?</strong>
+            <p>Go back to your revision plan to see the other lessons you need to review.</p>
+          </div>
+          <Link to={`/quizzes/${fromQuiz}`} state={{ backToPlan: true }} className="btn btn-primary">
+            Back to revision plan
+          </Link>
+        </div>
+      )}
+
       <div className="lesson-nav">
         {previous && (
-          <Link to={`/courses/${courseId}/lessons/${previous.id}`} className="nav-card prev">
+          <Link
+            to={`/courses/${courseId}/lessons/${previous.id}`}
+            state={planState}
+            className="nav-card prev"
+          >
             <span className="nav-label">
               <ArrowRightIcon size={14} className="back-icon" /> Previous
             </span>
@@ -182,7 +211,11 @@ function Lesson() {
         )}
 
         {next ? (
-          <Link to={`/courses/${courseId}/lessons/${next.id}`} className="nav-card next">
+          <Link
+            to={`/courses/${courseId}/lessons/${next.id}`}
+            state={planState}
+            className="nav-card next"
+          >
             <span className="nav-label">
               Next <ArrowRightIcon size={14} />
             </span>

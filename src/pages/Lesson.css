@@ -429,3 +429,52 @@
     animation: none;
   }
 }
+
+/* Shown when the lesson was opened from a quiz's revision plan */
+.plan-return {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 24px;
+  padding: 18px 20px;
+  background: #fffbea;
+  border: 2px solid #ffe7a0;
+  border-radius: 18px;
+}
+
+.plan-return-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  background: #ffd23f;
+}
+
+.plan-return > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.plan-return strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.plan-return p {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .plan-return {
+    flex-wrap: wrap;
+  }
+
+  .plan-return .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
