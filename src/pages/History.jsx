@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { supabase } from "../lib/supabase";
 import PageHeader from "../components/PageHeader";
 import CountUp from "../components/CountUp";
-import { HistoryIcon, ArrowRightIcon } from "../components/Icons";
+import { HistoryIcon, ArrowRightIcon, DownloadIcon } from "../components/Icons";
 import "./History.css";
 
 const levelLabels = { easy: "Easy", medium: "Medium", hard: "Hard" };
@@ -26,6 +26,46 @@ function barClass(percent) {
   if (percent >= 70) return "good";
   if (percent >= 50) return "ok";
   return "low";
+}
+
+// Puts a value in quotes so commas and quotes inside it don't break the CSV.
+function csvCell(value) {
+  return `"${String(value).replace(/"/g, '""')}"`;
+}
+
+// Turns the attempts into a CSV file and downloads it, straight from the browser.
+function downloadCsv(rows) {
+  const header = ["Date", "Quiz", "Topic", "Level", "Score", "Total", "Percentage", "Result"];
+
+  const lines = rows.map((item) =>
+    [
+      formatDate(item.taken_at),
+      item.quizzes.title,
+      item.quizzes.courses.title,
+      levelLabels[item.quizzes.difficulty],
+      item.score,
+      item.total,
+      `${item.percent}%`,
+      item.percent >= 70 ? "Passed" : "Not passed",
+    ]
+      .map(csvCell)
+      .join(",")
+  );
+
+  const csv = [header.map(csvCell).join(","), ...lines].join("\r\n");
+
+  // The \uFEFF at the start tells Excel the file is UTF-8.
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `studyflow-history-${today}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 function History() {
@@ -158,6 +198,17 @@ function History() {
               <span className="history-count">
                 Showing {visibleAttempts.length} of {totalAttempts} attempts
               </span>
+
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ gap: "8px" }}
+                onClick={() => downloadCsv(visibleAttempts)}
+                disabled={visibleAttempts.length === 0}
+              >
+                <DownloadIcon size={16} />
+                Download CSV
+              </button>
             </div>
 
             <div className="history-table-wrap">

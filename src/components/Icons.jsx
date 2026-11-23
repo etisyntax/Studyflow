@@ -28,6 +28,7 @@ import {
   Eye,
   EyeSlash,
   Compass,
+  DownloadSimple,
 } from "@phosphor-icons/react";
 
 function makeIcon(PhosphorIcon, defaultWeight = "duotone") {
@@ -67,3 +68,4 @@ export const HomeIcon = makeIcon(House);
 export const CoursesIcon = makeIcon(Books);
 export const LogoutIcon = makeIcon(SignOut);
 export const CompassIcon = makeIcon(Compass);
+export const DownloadIcon = makeIcon(DownloadSimple, "bold");
