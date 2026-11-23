@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { supabase } from "../lib/supabase";
 import PasswordInput from "../components/PasswordInput";
 import AuthLayout from "../components/AuthLayout";
 import "./Auth.css";
+import "./Reset.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,9 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
+  // Set by the reset password page after a new password is saved.
+  const passwordReset = location.state?.passwordReset;
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -43,6 +47,12 @@ function Login() {
         Log in to pick up right where you stopped.
       </p>
 
+      {passwordReset && !error && (
+        <div className="auth-success" role="status">
+          Your password has been changed. Log in with your new password.
+        </div>
+      )}
+
       {error && (
         <div key={attempt} className="auth-error" role="alert">
           {error}
@@ -64,7 +74,12 @@ function Login() {
         </div>
 
         <div className="form-group auth-in" style={{ "--d": "0.2s" }}>
-          <label htmlFor="login-password">Password</label>
+          <div className="label-row">
+            <label htmlFor="login-password">Password</label>
+            <Link to="/forgot-password" className="forgot-link">
+              Forgot password?
+            </Link>
+          </div>
           <PasswordInput
             id="login-password"
             value={password}
